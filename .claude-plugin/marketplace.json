@@ -1,0 +1,15 @@
+{
+  "name": "github-seo-skill",
+  "owner": {
+    "name": "Devkind",
+    "url": "https://devkind.com.au"
+  },
+  "plugins": [
+    {
+      "name": "github-seo-skill",
+      "source": ".",
+      "description": "Agent Skill for GitHub SEO: repo audit, search-ready README, pre-publish secret scan, launch order and MCP registry submissions.",
+      "category": "development"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security or conduct concern
+    url: https://github.com/devkindhq/github-seo-skill/security/advisories/new
+    about: Report privately, not as a public issue.

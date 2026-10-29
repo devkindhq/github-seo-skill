@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <rect width="1280" height="640" fill="#0f1b1f"/>
+  <rect x="80" y="96" width="8" height="200" fill="#2dd4bf"/>
+  <text x="116" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="30" font-weight="500" fill="#2dd4bf" letter-spacing="3">AGENT SKILL FOR CLAUDE CODE</text>
+  <text x="116" y="262" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="96" font-weight="700" fill="#f4f7f7">GitHub SEO Skill</text>
+  <text x="116" y="330" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="36" fill="#b6c4c8">Get your open-source repo found, safely.</text>
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="28" fill="#f4f7f7">
+    <text x="116" y="440">Repo audit</text>
+    <text x="360" y="440">Search-ready README</text>
+    <text x="700" y="440">Secret scan</text>
+    <text x="940" y="440">MCP registries</text>
+  </g>
+  <line x1="116" y1="470" x2="1164" y2="470" stroke="#2c3f45" stroke-width="2"/>
+  <text x="116" y="540" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="28" fill="#8aa0a6">github.com/devkindhq/github-seo-skill</text>
+  <text x="1164" y="540" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="28" font-weight="600" fill="#f4f7f7">Devkind</text>
+</svg>

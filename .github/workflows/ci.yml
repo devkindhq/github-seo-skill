@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Validate skill, evals, manifests and links
+        run: python3 scripts/validate_skill.py
+      - name: Compile the audit script
+        run: python3 -m py_compile skills/github-seo/scripts/check_repo_seo.py
+
+  skills-sh:
+    runs-on: ubuntu-latest
+    env:
+      DISABLE_TELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Verify the skill is discoverable and installable
+        run: |
+          npx -y skills@1.7.4 add . --list | tee /tmp/skills-list.txt
+          grep -q "github-seo" /tmp/skills-list.txt
+          mkdir -p /tmp/skills-smoke && cd /tmp/skills-smoke
+          npx -y skills@1.7.4 add "$GITHUB_WORKSPACE" -a claude-code -y
+          npx -y skills@1.7.4 list -a claude-code

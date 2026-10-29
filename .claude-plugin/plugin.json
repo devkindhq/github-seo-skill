@@ -1,0 +1,13 @@
+{
+  "name": "github-seo-skill",
+  "description": "Agent Skill for GitHub SEO: repo audit, search-ready README, pre-publish secret scan, launch order and MCP registry submissions.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Devkind",
+    "url": "https://devkind.com.au"
+  },
+  "homepage": "https://github.com/devkindhq/github-seo-skill",
+  "repository": "https://github.com/devkindhq/github-seo-skill",
+  "license": "MIT",
+  "keywords": ["github-seo", "repo-seo", "open-source", "readme", "mcp", "agent-skills"]
+}

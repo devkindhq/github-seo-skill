@@ -1,0 +1,54 @@
+{
+  "skill": "github-seo",
+  "cases": [
+    { "type": "should_trigger", "prompt": "how do I get more stars on my open source repo" },
+    { "type": "should_trigger", "prompt": "make my github repo rank on google" },
+    { "type": "should_trigger", "prompt": "we are about to open-source this project, what should we check first" },
+    { "type": "should_trigger", "prompt": "github seo for my template repo" },
+    { "type": "should_trigger", "prompt": "I built an MCP server, help me get it listed in the registries" },
+    { "type": "should_trigger", "prompt": "what topics and description should I put on this repo so people find it" },
+    { "type": "should_trigger", "prompt": "plan the launch for our new open source tool, reddit, hn, the lot" },
+    { "type": "should_trigger", "prompt": "is it safe to make this private repo public" },
+    { "type": "should_trigger", "prompt": "submit my mcp server to smithery and glama" },
+    { "type": "should_trigger", "prompt": "audit the discoverability of github.com/acme/widget-cli" },
+    { "type": "should_not_trigger", "prompt": "improve the SEO of my marketing website" },
+    { "type": "should_not_trigger", "prompt": "write a blog post about our product" },
+    { "type": "should_not_trigger", "prompt": "fix the failing unit test in this repo" },
+    { "type": "should_not_trigger", "prompt": "set up branch protection rules on main" },
+    { "type": "should_not_trigger", "prompt": "write API reference documentation for this module" },
+    { "type": "should_not_trigger", "prompt": "build an MCP server that wraps our REST API" },
+    { "type": "should_not_trigger", "prompt": "generate a changelog from the git log" },
+    { "type": "should_not_trigger", "prompt": "run keyword research for an ecommerce store" },
+    {
+      "type": "quality",
+      "prompt": "We want to open-source our internal CLI. What do we do before and after we flip it public?",
+      "expected_behavior": [
+        "runs or asks for a full-history secret scan before anything else, not just the current tree",
+        "checks for client names, internal ticket keys and personal data, and stops to ask the owner if anything is questionable",
+        "recommends settling the repo name before the repo goes public",
+        "orders the launch as repo, canonical write-up, community posts, then wider channels",
+        "labels advice as verified, observed or general rather than stating all of it as fact"
+      ]
+    },
+    {
+      "type": "quality",
+      "prompt": "Audit github.com/acme/widget-cli for search visibility",
+      "expected_behavior": [
+        "runs scripts/check_repo_seo.py rather than guessing at the repo state",
+        "reports failures before warnings",
+        "tells the owner the social preview image must be uploaded manually in Settings",
+        "does not add inaccurate topics or keyword-stuff the description"
+      ]
+    },
+    {
+      "type": "quality",
+      "prompt": "Publish my MCP server to all the registries",
+      "expected_behavior": [
+        "completes the plain repo checklist first, then the registry steps",
+        "starts with the Official MCP Registry using server.json and mcp-publisher, since other registries ingest from it",
+        "prepares one set of submission copy and reuses it for every listing",
+        "flags that manual registries have review queues and should not be resubmitted"
+      ]
+    }
+  ]
+}
