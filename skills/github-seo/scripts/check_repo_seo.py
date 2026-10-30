@@ -109,6 +109,33 @@ for label, candidates in [
     ok = bool(files & candidates)
     record("PASS" if ok else "WARN", label, "present" if ok else "missing in repo root")
 
+# MCP server metadata (only when a server.json is present)
+if "server.json" in files:
+    try:
+        sj = json.loads(base64.b64decode(json.loads(gh("api", f"repos/{slug}/contents/server.json"))["content"]))
+    except (SystemExit, ValueError):
+        sj = None
+        record("FAIL", "server.json", "present but not valid JSON")
+    if sj is not None:
+        owner = slug.split("/")[0].lower()
+        sname = sj.get("name", "")
+        if sname.lower().startswith(f"io.github.{owner}/"):
+            record("PASS", "server.json name", sname)
+        else:
+            record("WARN", "server.json name", f'"{sname}" is not io.github.{owner}/*. Fine only with domain auth.')
+        sdesc = sj.get("description", "")
+        record("PASS" if 0 < len(sdesc) <= 100 else "FAIL", "server.json description", f"{len(sdesc)} chars, max 100")
+        record("PASS" if sj.get("websiteUrl") else "WARN", "server.json websiteUrl", sj.get("websiteUrl") or "empty. Set the official homepage field.")
+        pkgs = sj.get("packages") or []
+        if any(p.get("registryType") == "oci" for p in pkgs):
+            df = ""
+            if "dockerfile" in files:
+                df = base64.b64decode(json.loads(gh("api", f"repos/{slug}/contents/Dockerfile"))["content"]).decode()
+            has = "io.modelcontextprotocol.server.name" in df and sname in df
+            record("PASS" if has else "FAIL", "OCI label", "matches server.json name" if has else "Dockerfile lacks LABEL io.modelcontextprotocol.server.name matching the name")
+        elif any(p.get("registryType") == "npm" for p in pkgs):
+            record("PASS", "npm mcpName", "check package.json mcpName equals server.json name (not read by this script)")
+
 width = max(len(n) for _, n, _ in results)
 for level, n, d in results:
     print(f"{level:<5} {n:<{width}}  {d}")
