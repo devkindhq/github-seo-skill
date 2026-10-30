@@ -81,7 +81,9 @@ Fix failures first, then warnings.
 
 ## Step B: MCP server checklist (after Step A)
 
-Use `references/mcp-registry-checklist.md`. It covers the Official MCP Registry (`server.json`
+Start with `references/mcp-install-and-metadata.md`: choose the package type (npm, PyPI, OCI and
+others each have their own ownership check), complete `server.json` including `websiteUrl`, and
+lay out the README install routes per client. Then use `references/mcp-registry-checklist.md`. It covers the Official MCP Registry (`server.json`
 plus the `mcp-publisher` CLI), Smithery, Glama, mcp.so, mcpservers.org, Cursor Directory, which
 registries auto-ingest from the Official one, and common gotchas (stale listings under a personal
 account, publish order, domain presence).

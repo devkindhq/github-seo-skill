@@ -6,7 +6,8 @@ Generalised from a real MCP server submission run across these registries on 202
 ## Prerequisite
 
 Finish Step A in `SKILL.md` first (README, description, topics, license). A registry listing
-points back at the repo, and a thin repo makes a thin listing.
+points back at the repo, and a thin repo makes a thin listing. Then work through
+`mcp-install-and-metadata.md` for the package type, `server.json` fields and README install routes.
 
 ## Prepare the submission copy once
 
@@ -41,6 +42,10 @@ Write the fields every listing asks for, then reuse them verbatim so listings st
 | **Community lists** (selective, unclear criteria) | Small subsets of servers, links may be nofollow [observed]. | Low priority. |
 
 ## Gotchas
+
+- **Empty `websiteUrl`.** Put the homepage in the official `websiteUrl` field, not only under
+  `_meta`. See `mcp-install-and-metadata.md`.
+- **Version drift.** Keep `package.json`, `server.json` and `manifest.json` on the same version.
 
 - **Stale listings under a personal account.** If the server was ever published from a personal
   GitHub account before the org account existed, that listing can persist on registries such as

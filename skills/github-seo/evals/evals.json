@@ -49,6 +49,17 @@
         "prepares one set of submission copy and reuses it for every listing",
         "flags that manual registries have review queues and should not be resubmitted"
       ]
+    },
+    {
+      "type": "quality",
+      "prompt": "My MCP server ships only as a Docker image. How do I publish it to the official registry?",
+      "expected_behavior": [
+        "uses registryType oci with an identifier of the form registry/namespace/repository:tag",
+        "adds the io.modelcontextprotocol.server.name label to the image and matches it to the server.json name",
+        "fills websiteUrl and keeps the description at 100 characters or fewer",
+        "tells the owner that mcp-publisher login is interactive and theirs to run",
+        "labels registry facts with a verification date rather than stating them from memory"
+      ]
     }
   ]
 }
