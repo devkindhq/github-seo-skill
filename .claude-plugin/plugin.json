@@ -1,5 +1,6 @@
 {
   "name": "github-seo-skill",
+  "displayName": "GitHub SEO Skill",
   "description": "Agent Skill for GitHub SEO: repo audit, search-ready README, pre-publish secret scan, launch order and MCP registry submissions.",
   "version": "0.1.0",
   "author": {
