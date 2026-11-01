@@ -1,5 +1,6 @@
 {
   "name": "github-seo-skill",
+  "description": "Agent Skill for getting open-source GitHub repos found: audit, search-ready README, pre-publish secret scan and MCP registry submissions.",
   "owner": {
     "name": "Devkind",
     "url": "https://devkind.com.au"

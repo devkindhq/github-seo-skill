@@ -48,10 +48,11 @@ Order: make the repo public first, push the image second, publish third. The `se
 - `mcp-publisher login github` is an interactive device-code flow. The repo owner runs it.
 - Org namespace gotcha [verified, 2026-11-02, observed from a real run]: the device flow grants
   only the user's personal namespace. Publishing `io.github.<org>/<name>` returned 403 with
-  "You have permission to publish: io.github.<user>/*". The fix that worked:
-  `mcp-publisher login github --token "$(gh auth token)"`, where the `gh` token has the
-  `read:org` scope and the user is an org Owner or admin. The token is never printed or pasted.
-  Alternative: the GitHub Actions OIDC route (section 7). Never paste a PAT into a chat.
+  "You have permission to publish: io.github.<user>/*". The fix that worked was logging in with
+  a GitHub token that has the `read:org` scope, as a user who is an org Owner or admin. Run
+  `mcp-publisher login --help` for the token option, and supply the token yourself so it is never
+  printed or pasted. Alternative: the GitHub Actions OIDC route (section 7).
+  Never paste a token into a chat.
 - `mcp-publisher` has no `validate` command [verified, 2026-11-02]. Its commands are `init`,
   `login`, `logout`, `publish` and `status`. The registry validates on publish, and the 100 char
   description limit is enforced by the schema.

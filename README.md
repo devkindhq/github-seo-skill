@@ -61,6 +61,14 @@ python3 skills/github-seo/scripts/check_repo_seo.py owner/repo
 It prints `PASS`, `WARN` or `FAIL` per check and exits non-zero on any `FAIL`. The social preview
 image cannot be read or set through the CLI, so it is listed as a manual step.
 
+## Network access and data
+
+This repo collects no data and runs no server. The audit script only calls the GitHub CLI (`gh`)
+you have logged in, using read-only requests. When the skill guides an MCP server submission, it
+tells you to look up a server on the Official MCP Registry
+(`https://registry.modelcontextprotocol.io`), and the publishing steps use the `mcp-publisher`
+tool, which sends your server metadata to that registry. Nothing is sent unless you run those steps.
+
 ## How the advice is labelled
 
 GitHub does not publish how its search ranks repositories, so every claim in the skill carries a label:
