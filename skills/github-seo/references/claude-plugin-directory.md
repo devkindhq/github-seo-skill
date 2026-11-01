@@ -39,6 +39,21 @@ touches a fix [observed, 2026-11-02].
 
 All rows [observed, 2026-11-02].
 
+### Scanner false positives (second submission, 2026-11-02)
+
+Two more plugins went through Validate on 2026-11-02. The scanner reads text in skills and
+READMEs, not only code, so documentation can trigger holds [observed, 2026-11-02].
+
+| Trigger seen | Result | What happened |
+|---|---|---|
+| A skill doc example reading `process.env.X_API_KEY` next to a `fetch()` | Two policy holds, "Uses a credential from the user's machine" | Cleared after the example read was rewritten as pseudocode and the variable renamed [observed, 2026-11-02] |
+| The English word "pass" in skill prose, such as "a later pass can reference" | Same credential hold, worded as reading the installer's "pass" (the `pass` password manager), paired with a documented `curl` upload | Rewording one instance surfaced the next. The scanner reports one hit per run, and the word appears in dozens of skill bodies. Left for reviewer confirmation [observed, 2026-11-02] |
+| Many example images (66 files) in the repo | Policy hold, "Image or font file that the plugin's code could run" | Not fixable without removing or relocating the images, so the plugin goes to a reviewer [observed, 2026-11-02] |
+| Docs saying to run a `curl` command that a tool returns, and some PNG files | Non-blocking "download-and-run" warning | Doc-only mentions need no change per the portal. Only PNGs were flagged, not the WebP files. Converting five flagged PNGs to WebP was tried; whether that clears the warning is [unverified] |
+
+Each hold on a skill-text false positive can be left for reviewer confirmation instead of
+being chased, when the plugin is going to a reviewer anyway [general].
+
 Icon: square PNG or JPEG, 512 to 2048 px, under 2 MB. It reportedly locks on first save or
 submit, so get it right before then [observed, 2026-11-02; the lock behaviour is reported, not
 tested, so treat it as [unverified]].
