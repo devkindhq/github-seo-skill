@@ -78,6 +78,9 @@ Fix failures first, then warnings.
    produces the artifact the next needs.
 9. **Upstream galleries and awesome-lists** only once the repo is complete and has real stars.
    Maintainers reject cold, thin submissions.
+10. **Claude plugin directory.** If the repo ships a Claude plugin, follow
+    `references/claude-plugin-directory.md` for the submission portal, Validate findings and
+    the other plugin distribution routes.
 
 ## Step B: MCP server checklist (after Step A)
 
