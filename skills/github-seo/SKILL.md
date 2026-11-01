@@ -7,7 +7,7 @@ license: MIT
 # GitHub SEO
 
 A playbook for getting an open-source repo found, ranked and cited, in the right order.
-Built from Devkind's own SERP research plus standard open-source practice.
+Built from SERP research plus standard open-source practice.
 
 ## Evidence labels
 
