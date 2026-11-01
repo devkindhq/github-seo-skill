@@ -25,13 +25,36 @@ OCI details [verified]: supported hosts are Docker Hub, `ghcr.io`, Google Artifa
 (a digest also works). Pin a version tag, not `latest`. Put the `LABEL` in the Dockerfile and
 rebuild before the final push, because the label has to be in the pushed image.
 
+OCI route end to end [verified, 2026-11-02, observed from real runs]:
+
+1. Add `LABEL io.modelcontextprotocol.server.name="<server.json name>"` to the Dockerfile.
+2. Build multi-arch and push, using a `docker-container` builder:
+   `docker buildx build --builder <builder> --push --platform linux/amd64,linux/arm64 -t <ns>/<img>:<ver> -t <ns>/<img>:latest .`
+3. Verify with `docker buildx imagetools inspect <ns>/<img>:<ver>`. Extra `unknown/unknown`
+   entries are buildx provenance and SBOM attestations, not platforms. Check the label on each
+   platform with `--format '{{json .Image}}'`.
+4. Smoke test: pull the image and import the server module.
+5. Only then run `mcp-publisher publish`.
+
+Order: make the repo public first, push the image second, publish third. The `server.json`
+`identifier` still pins the version tag even though `latest` is also pushed.
+
 ## 2. Namespace and auth [verified]
 
-- GitHub login gives `io.github.<user-or-org>/<name>`. A live org-owned entry exists
-  (`io.github.devkindhq/swell`) [observed], so org namespaces work in practice.
+- GitHub login gives `io.github.<user-or-org>/<name>`. Org-owned entries are live in
+  the registry [observed], so org namespaces work in practice.
 - Domain auth (DNS TXT record or an HTTP file at `/.well-known/mcp-registry-auth`) gives a
   reverse-DNS name such as `com.example.*/<name>`.
 - `mcp-publisher login github` is an interactive device-code flow. The repo owner runs it.
+- Org namespace gotcha [verified, 2026-11-02, observed from a real run]: the device flow grants
+  only the user's personal namespace. Publishing `io.github.<org>/<name>` returned 403 with
+  "You have permission to publish: io.github.<user>/*". The fix that worked:
+  `mcp-publisher login github --token "$(gh auth token)"`, where the `gh` token has the
+  `read:org` scope and the user is an org Owner or admin. The token is never printed or pasted.
+  Alternative: the GitHub Actions OIDC route (section 7). Never paste a PAT into a chat.
+- `mcp-publisher` has no `validate` command [verified, 2026-11-02]. Its commands are `init`,
+  `login`, `logout`, `publish` and `status`. The registry validates on publish, and the 100 char
+  description limit is enforced by the schema.
 
 ## 3. `server.json` fields that matter for discovery
 
@@ -58,8 +81,11 @@ Environment variables go in `packages[].environmentVariables` with `name`, `desc
 Verify after publishing:
 
 ```bash
-curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=<your-server-name>"
+curl -s "https://registry.modelcontextprotocol.io/v0.1/servers?search=<your-server-name>"
 ```
+
+A good result shows status `active`, `isLatest` true and `websiteUrl` populated [verified,
+2026-11-02, observed from a real run].
 
 The registry is in preview, so breaking changes or data resets can happen [verified].
 
@@ -86,6 +112,9 @@ readers, and the collapsed blocks keep the README short [general]. Keep to the 4
 target by linking out to the write-up for anything long, and cap the client list at the clients
 you have actually tested.
 
+Generate every README install block (standard config, Cursor deeplink, per-client blocks) from
+one script so they stay consistent [general]. Hand-edited copies drift.
+
 Docker-only servers: the standard config is
 `{"command":"docker","args":["run","--rm","-i","<image>:<tag>"]}`. Add resource limits only if the
 server needs them.
@@ -98,6 +127,9 @@ server needs them.
 | `smithery.yaml` | Smithery | `name`, `description`, `vendor`, `homepage`, `license`, `startCommand` with a config schema [observed]. |
 | `manifest.json` | MCPB bundle, desktop installs | Carries `author` with name and URL, `repository`, and `user_config` prompts for credentials [observed]. |
 | README badges | Humans | "Built by <org>" badge linking to the homepage. |
+
+`smithery.yaml` with a docker `commandFunction` was copied from another published server README and is
+[unverified] against Smithery's current docs. Check them before reusing it.
 
 Keep one source of truth for the description, tool list and homepage, and copy it into each file.
 A version drift between `package.json`, `server.json` and `manifest.json` is easy to introduce
@@ -117,3 +149,44 @@ A version drift between `package.json`, `server.json` and `manifest.json` is eas
 A manual publish drifts out of date. The registry documents a GitHub Actions route using OIDC
 [verified: documented, not tested here]. Wire `mcp-publisher publish` into the release job so the
 registry version tracks the package version.
+
+## 8. Docker MCP Registry, a second distribution route
+
+`docker/mcp-registry` lists containerised servers for Docker's MCP tooling. Facts below are from
+its `CONTRIBUTING.md` [verified, 2026-11-02]: https://github.com/docker/mcp-registry/blob/main/CONTRIBUTING.md
+
+- Open a PR that adds `servers/<name>/server.yaml`. `task wizard` or `task create` generate it.
+- `server.yaml` pins a source commit SHA (`source.project` and `source.commit`).
+- Every PR needs a review from the Docker team, and CI must pass.
+- Without `--image`, Docker builds and hosts the image under its `mcp/` namespace, with
+  signatures, provenance and SBOMs. With `--image <org>/<img>`, your own image is used and
+  those extras do not apply.
+- The contributing guide asks that the server license allow consumption (MIT or Apache 2 named as
+  good, GPL as not).
+- Review turnaround and listing criteria beyond the above are [unverified].
+
+## 9. Scrubbing a leaked repo history
+
+If the secret scan finds leaks in history and the token lacks `delete_repo`
+[verified, 2026-11-02, observed from a real run]:
+
+1. Rename the old repo.
+2. Create a new repo under the original name.
+3. Push only `main`. Do not mirror refs, because leaked content can sit in `refs/pull/*`.
+4. Re-scan the new repo with `gitleaks`.
+5. Have the owner delete the old repo in the GitHub UI.
+
+Rotate any leaked credential regardless. History scrubbing does not un-leak it.
+
+## 10. Earn mentions with a closing "who built this" section [general]
+
+End the README with a short, related and non-pushy section that tells readers who maintains the
+server and where to get help or related work. It earns a branded mention and a link back from every
+directory that renders the README. Keep it specific to the server's audience, not generic.
+
+- Heading that names the reader's need, for example "Need this wired into your stack?".
+- Two or three sentences on what you or your organisation offers that relates to the server.
+- One link to a specific page on a domain you own (a services, consulting or product page, not
+  only the home page) plus a contact address.
+- Request each linked URL first and confirm it returns 200.
+- Use the same organisation name and homepage as in `server.json`, `smithery.yaml` and the About box.

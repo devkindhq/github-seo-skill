@@ -30,7 +30,8 @@ Write the fields every listing asks for, then reuse them verbatim so listings st
 
 | Registry | How it works | Action |
 |---|---|---|
-| **Official MCP Registry** | A `server.json` in your project, published with the `mcp-publisher` CLI. Names take the form `io.github.<github-user-or-org>/<name>` and you must authenticate as that GitHub account [verified, 2026-10-29, registry README]. A pull request to the registry repo does not publish a server [verified, 2026-10-29]. | Direct. Do this first, because other registries ingest from it. |
+| **Official MCP Registry** | A `server.json` in your project, published with the `mcp-publisher` CLI. Names take the form `io.github.<github-user-or-org>/<name>` and you must authenticate with access to that namespace [verified, 2026-10-29, registry README]. For an org namespace the device flow is not enough, see `mcp-install-and-metadata.md` section 2 [verified, 2026-11-02]. A pull request to the registry repo does not publish a server [verified, 2026-10-29]. | Direct. Do this first, because other registries ingest from it. |
+| **Docker MCP Registry** | PR adding `servers/<name>/server.yaml`, Docker team review [verified, 2026-11-02]. | Optional second route, see `mcp-install-and-metadata.md` section 8. |
 | **Smithery** | Listed under an organisation namespace. Shows a quality score that depends on the live tool surface [observed]. | Direct. Check for stale listings under a personal account. |
 | **PulseMCP** | Ingests from the Official Registry [observed]. | None once the Official entry is live. |
 | **mcpbench.ai** | Indexes from the Official Registry, can lag [observed]. | Verify it appears. |
@@ -46,7 +47,6 @@ Write the fields every listing asks for, then reuse them verbatim so listings st
 - **Empty `websiteUrl`.** Put the homepage in the official `websiteUrl` field, not only under
   `_meta`. See `mcp-install-and-metadata.md`.
 - **Version drift.** Keep `package.json`, `server.json` and `manifest.json` on the same version.
-
 - **Stale listings under a personal account.** If the server was ever published from a personal
   GitHub account before the org account existed, that listing can persist on registries such as
   Smithery. Find it and have it removed, through the registry's support if there is no self-service delete.

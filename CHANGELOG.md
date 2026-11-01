@@ -8,6 +8,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - `references/mcp-install-and-metadata.md`: package types and ownership checks, `server.json` fields, README install routes per client, listing files, org visibility.
 - Audit checks for `server.json` (description length, `websiteUrl`, namespace) and the OCI label.
 - Docker/OCI registry quality eval.
+- MCP publishing learnings from a real run (2026-11-02): org namespace auth, OCI build and verify flow, no `validate` command, listing check, Docker MCP Registry route, leaked-history scrub, README install block generation, closing "who built this" section.
 
 ## [0.1.0] - 2026-10-29
 
