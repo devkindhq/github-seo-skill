@@ -35,7 +35,7 @@ Write the fields every listing asks for, then reuse them verbatim so listings st
 | **Smithery** | On 31 Oct 2026 its hosted server URLs, API, Connect and Toolbox, accounts and API keys, and CLI and SDKs stop working (current versions marked deprecated). It remains a public, non-proxied MCP registry powered by Arcade.dev [verified, 2026-11-02, smithery.ai/future]. | None. Do not publish to Smithery, and skip deploy or `smithery.yaml` work. An existing listing stays as a passive registry entry. |
 | **PulseMCP** | Ingests from the Official Registry [observed]. | None once the Official entry is live. |
 | **mcpbench.ai** | Indexes from the Official Registry, can lag [observed]. | Verify it appears. |
-| **Glama** | Manual submission, goes to review [observed]. A listing can exist before you submit [observed, 2026-11-02]. | Search Glama first. Claim an existing listing (see Gotchas), else submit and wait. |
+| **Glama** | Manual submission, goes to review [observed]. A listing can exist before you submit [observed, 2026-11-02]. Approval comes by email [observed, 2026-11-03]. The listing gets tools and a score only after a Glama build passes [observed, 2026-11-03]. | Search Glama first. Claim an existing listing (see Gotchas), else submit with Add Server and wait for the email. Then set the build (see Gotchas). |
 | **mcp.so** | Manual submission with name, icon and server config, human approval [observed]. | Direct, then wait. |
 | **mcpservers.org** | Free manual listing, category required, email approval [observed]. | Direct, then wait. |
 | **Cursor Directory** | Manual submission with an icon upload [observed]. | Direct. |
@@ -64,8 +64,22 @@ Write the fields every listing asks for, then reuse them verbatim so listings st
 
   After you change `glama.json`, do the Claim flow again [verified, 2026-11-02,
   https://glama.ai/blog/2025-07-08-what-is-glamajson].
+- **Glama build config.** Glama builds its own image from the settings on the server page under
+  Admin, Dockerfile. The repo needs no Dockerfile for this [observed, 2026-11-03]. Glama generated
+  `pnpm install` build steps for a repo that pins `"packageManager": "yarn@1.22.22"`, and the build
+  failed with "This project is configured to use yarn" [observed, 2026-11-03]. Set the build steps
+  for the repo's own package manager, for example
+  `["npm install -g yarn@1.22.22", "yarn install --frozen-lockfile", "yarn build"]`, and the CMD
+  to the stdio entry point, for example `["mcp-proxy", "--", "node", "dist/index.js"]`. Check the
+  generated environment schema as well: one set `TRANSPORT` to `http` for a server whose default
+  is stdio [observed, 2026-11-03]. Use placeholder values only, never real keys.
+- **Stale Glama listing.** The summary, tool list and score come from the latest Glama release,
+  not from the repo [observed, 2026-11-03]. An old README or tool count after a sync usually means
+  the build fails. Fix the build, then run Build & Release. Auto-Release then builds on every
+  GitHub release [observed, 2026-11-03]. Glama numbers its releases on its own, so they do not
+  match npm versions [observed, 2026-11-03].
 - **Publish order.** Merge pull requests that change the tool surface before publishing to the
-  Official Registry. The `server.json` tool list must match what ships, and some registries
+  Official Registry. If `server.json` lists tools, that list must match what ships, and some registries
   recompute a quality score from the live tool count.
 - **Domain presence compounds** [general]. Several distinct root domains linking to the project is
   likely a stronger signal than one domain repeating. If you control more than one property,
@@ -84,6 +98,19 @@ Write the fields every listing asks for, then reuse them verbatim so listings st
   `[![owner/repo MCP server](https://glama.ai/mcp/servers/owner/repo/badges/score.svg)](https://glama.ai/mcp/servers/owner/repo)`
 - At least one permitted emoji and no other emoji. 🎖️ marks an official implementation only.
 - Alphabetical order within the category.
+
+The list's bot and recent merges add these rules:
+
+- The Glama listing must pass Glama's checks, not only show a badge. The bot asks that the server
+  "passes all checks" and that it "start and respond to introspection requests", which is the Glama
+  build above [verified, 2026-11-03, bot comment on a closed PR].
+- One server per PR. Nearly every merged PR adds one line [observed, 2026-11-03].
+- The scope emoji follows the note under the README legend: ☁️ "when MCP server is talking to
+  remote APIs", 🏠 "when MCP server is talking to a locally installed software" [verified,
+  2026-11-03, README legend note].
+- Put the badge right after the repo link, as the existing entries do [observed, 2026-11-03].
+- `CONTRIBUTING.md` sets no star minimum. The Glama checks are the gate for this list
+  [verified, 2026-11-03, CONTRIBUTING.md].
 
 Order: make the repo public, get the Glama listing, then open the awesome-list PR.
 

@@ -89,7 +89,7 @@ others each have their own ownership check), complete `server.json` including `w
 lay out the README install routes per client. Then use `references/mcp-registry-checklist.md`. It covers the Official MCP Registry (`server.json`
 plus the `mcp-publisher` CLI), Glama, mcp.so, mcpservers.org, Cursor Directory, which
 registries auto-ingest from the Official one, and common gotchas (stale listings under a personal
-account, publish order, domain presence). Pitfalls from real runs (org namespace 403, OCI
+account, the Glama build config, publish order, domain presence). Pitfalls from real runs (org namespace 403, OCI
 build and label, leaked-history scrub) are in the install reference.
 Smithery shut down its hosted services on 31 Oct 2026 and is now a passive registry. Do not
 publish to Smithery, and skip deploy or `smithery.yaml` work [verified, 2026-11-02, smithery.ai/future].

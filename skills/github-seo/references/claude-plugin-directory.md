@@ -32,6 +32,24 @@ repeating this. Anything not seen during the run is marked [unverified].
 5. **Review and submit.** An automated scan runs first. Held items go to a human reviewer.
    Approval is not guaranteed, and no review-time estimate was shown [observed, 2026-11-02].
 
+## Prepare the plugin
+
+- The plugin folder is the folder that holds `.claude-plugin/plugin.json`, and installers get that
+  whole folder [verified, 2026-11-03, claude.com/docs/plugins/pre-submission-checklist.md]. If it
+  is the root of a repo that also holds the server's `package.json` and `yarn.lock`, every install
+  shows a note that the listed packages were not installed, because plugin installs do not support
+  yarn or pnpm lockfiles [observed, 2026-11-03, `claude plugin list`]. A server that runs from
+  npm through `npx` never uses those packages, so the note does not affect it [general].
+- Set `displayName`, and set `icon` to a path inside the plugin, such as `./assets/icon.png`. The
+  directory reads `icon`, `documentationUrl`, `supportUrl`, `privacyPolicyUrl` and
+  `termsOfServiceUrl` from `plugin.json` only [verified, 2026-11-03,
+  code.claude.com/docs/en/plugins-reference].
+- Add a README "Network access and data" section: what the plugin downloads, which hosts it calls,
+  what each request carries and what it stores. The checklist asks the README to describe
+  everything the plugin runs, sends or fetches [verified, 2026-11-03, pre-submission checklist].
+- Run `claude plugin validate .` in the plugin folder before you push. It checks syntax and schema
+  only, so the portal's Validate still runs [verified, 2026-11-03, pre-submission checklist].
+
 ## Validate
 
 Validate runs 7 checks and reports three kinds of result: Blocking findings, policy holds and
