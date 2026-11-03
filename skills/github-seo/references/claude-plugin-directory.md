@@ -6,15 +6,23 @@ repeating this. Anything not seen during the run is marked [unverified].
 
 ## Prerequisites
 
-- A paid claude.ai plan [observed, 2026-11-02].
-- A public GitHub repo with `.claude-plugin/plugin.json` [observed, 2026-11-02].
-- A GitHub account with push access to the repo, used by the submitter [observed, 2026-11-02].
+- A paid claude.ai plan [observed, 2026-11-02]. On Team and Enterprise, the submitter needs the
+  Owner role or, on Enterprise, a custom role with the Directory permission [verified, 2026-11-02,
+  claude.com/docs/directory/publish.md].
+- A GitHub repo with `.claude-plugin/plugin.json` [observed, 2026-11-02]. The repo can stay
+  private while you validate and submit, but must be public before the listing goes live
+  [verified, 2026-11-02, claude.com/docs/plugins/submit.md].
+- A GitHub account with push access to the repo, used by the submitter [observed, 2026-11-02],
+  and connected on claude.ai in the submitting organisation [verified, 2026-11-02, same page].
+- The listing belongs to the organisation you submit from. Submit from the organisation that
+  should own it long term [verified, 2026-11-02, claude.com/docs/directory/publish.md].
 - Limits: at most 10 submissions per organisation per 24 hours (drafts and withdrawn
   submissions count), and one submission per repo and folder [observed, 2026-11-02].
 
 ## The five steps
 
-1. **Source.** Point the portal at the repo and folder.
+1. **Source.** In the portal, select Submit new, then Plugin bundle [verified, 2026-11-02,
+   claude.com/docs/plugins/submit.md]. Point the portal at the repo and folder.
 2. **Listing details.** Name, description, icon and related listing fields.
 3. **Data handling.** Questions on personal data, whether the plugin sends data to other
    services (declare this in the README), retention, and users under 18 [observed, 2026-11-02].
@@ -38,6 +46,19 @@ touches a fix [observed, 2026-11-02].
 | No display name or marketplace description | Listing fields incomplete | Add `displayName` in `plugin.json` and `description` in `marketplace.json` |
 
 All rows [observed, 2026-11-02].
+
+### Documented rules for packages and files
+
+From claude.com/docs/plugins/pre-submission-checklist.md [verified, 2026-11-02]:
+
+| Rule | Result if broken |
+|---|---|
+| Pin every package a launcher runs to an exact version, such as `npx <pkg>@1.2.3` | Blocks, "Unpinned npx launcher" |
+| A launcher with an exact pin | Still held for a reviewer, "Runs a pinned npx or uvx package" |
+| `.npmrc` or another file that sets a registry or package source, in a plugin with a launcher | Blocks |
+| `package.json` beside `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock` or `bun.lockb` in the plugin folder root | Held for a reviewer, "Dependencies install from a lockfile". `yarn.lock` is not on the list |
+| Keep every file that is not an image or font under 256 KiB | Held for a reviewer |
+| Keep the plugin to 512 files or fewer | Held for a reviewer |
 
 ### Scanner false positives (second submission, 2026-11-02)
 
@@ -73,3 +94,8 @@ The review step offers an auto-publish toggle. Two update modes were shown [obse
 - `anthropics/claude-plugins-official` is by partner contact only [observed, 2026-11-02].
 - Your own `marketplace.json` lets users run `/plugin marketplace add <owner>/<repo>` [general].
 - A skills.sh listing is automatic, built from `npx skills add` telemetry [observed, 2026-11-02].
+- `/plugin install <name> --marketplace <owner>/<repo>` adds the marketplace and installs in one
+  step. It needs Claude Code v2.1.275 or later [verified, 2026-11-02,
+  code.claude.com/docs/en/plugins/publish.md].
+- The directory no longer accepts desktop extension (MCPB) listings. Ship a local MCP server
+  inside a plugin bundle instead [verified, 2026-11-02, claude.com/docs/directory/publish.md].

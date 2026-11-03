@@ -1,6 +1,6 @@
 ---
 name: github-seo
-description: Makes an open-source GitHub repo discoverable and safe to publish. Audits the repo name, description, topics and README for search, writes a search-ready README, runs a pre-publish secret and client-data check, and guides the launch sequence. Covers MCP server registry submissions (Official MCP Registry, Smithery, Glama, mcp.so). Use when the user wants more stars, traffic or search visibility for a repo, is about to open-source a project, asks for GitHub SEO or repo SEO, or wants to publish an MCP server. Not for general website SEO.
+description: Makes an open-source GitHub repo discoverable and safe to publish. Audits the repo name, description, topics and README for search, writes a search-ready README, runs a pre-publish secret and client-data check, and guides the launch sequence. Covers MCP server registry submissions (Official MCP Registry, Glama, mcp.so) and existing Smithery listings. Use when the user wants more stars, traffic or search visibility for a repo, is about to open-source a project, asks for GitHub SEO or repo SEO, or wants to publish an MCP server. Not for general website SEO.
 license: MIT
 ---
 
@@ -87,10 +87,12 @@ Fix failures first, then warnings.
 Start with `references/mcp-install-and-metadata.md`: choose the package type (npm, PyPI, OCI and
 others each have their own ownership check), complete `server.json` including `websiteUrl`, and
 lay out the README install routes per client. Then use `references/mcp-registry-checklist.md`. It covers the Official MCP Registry (`server.json`
-plus the `mcp-publisher` CLI), Smithery, Glama, mcp.so, mcpservers.org, Cursor Directory, which
+plus the `mcp-publisher` CLI), Glama, mcp.so, mcpservers.org, Cursor Directory, which
 registries auto-ingest from the Official one, and common gotchas (stale listings under a personal
 account, publish order, domain presence). Pitfalls from real runs (org namespace 403, OCI
 build and label, leaked-history scrub) are in the install reference.
+Smithery shut down its hosted services on 31 Oct 2026 and is now a passive registry. Do not
+publish to Smithery, and skip deploy or `smithery.yaml` work [verified, 2026-11-02, smithery.ai/future].
 
 ## What not to do
 

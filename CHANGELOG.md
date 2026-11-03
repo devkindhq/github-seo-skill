@@ -4,6 +4,9 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Changed
+- MCP distribution facts (2026-11-02): Smithery is now a passive registry, Official MCP Registry `_meta` 4 KB limit and npm version timing, Glama listing claim, awesome-mcp-servers requirements, Claude plugin directory rules.
+
 ## [0.2.0] - 2026-11-02
 
 ### Added
