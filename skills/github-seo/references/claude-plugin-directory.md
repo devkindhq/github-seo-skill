@@ -47,33 +47,6 @@ touches a fix [observed, 2026-11-02].
 
 All rows [observed, 2026-11-02].
 
-The documented listing fields go in `plugin.json` only, not in a marketplace entry: `icon` (a
-path to an image inside the plugin, such as `./assets/icon.png`), `documentationUrl`,
-`supportUrl`, `privacyPolicyUrl` and `termsOfServiceUrl` (each `https://`). Claude Code ignores
-them at load time [verified, 2026-11-03, code.claude.com/docs/en/plugins-reference].
-
-Before you push, run `claude plugin validate .` in the plugin folder. It checks syntax and
-schema only, not the directory rules, so the portal's Validate still runs [verified, 2026-11-03,
-claude.com/docs/plugins/pre-submission-checklist.md].
-
-### Choose the plugin folder
-
-The plugin folder is the folder that holds `.claude-plugin/plugin.json`, and installers get
-that whole folder [verified, 2026-11-03, claude.com/docs/plugins/pre-submission-checklist.md].
-Claude Code copies it into its plugin cache at install [verified, 2026-11-03,
-code.claude.com/docs/en/plugins/loading]. You cannot submit `.claude-plugin/` alone: it holds
-only the manifests, and every other plugin file sits beside it.
-
-- **Plugin at the root of a repo that also holds server code:** works, but every install
-  copies the source, scripts and lockfile, and the scan reads all of it. A lockfile near 256 KiB
-  can cross the limit after a dependency update and cause a reviewer hold [general].
-- **Plugin-only repo or a subfolder such as `plugin/`:** the common layout when the server
-  ships from npm or a container registry. In `anthropics/claude-plugins-official`, 159 entries
-  use a whole repo and 99 use a `git-subdir` path. A sample of 14 whole-repo entries had 12
-  with no code at the root [observed, 2026-11-03].
-- In a subfolder, keep `marketplace.json` at the repo root with `"source": "./plugin"`, so the
-  install command does not change [general].
-
 ### Documented rules for packages and files
 
 From claude.com/docs/plugins/pre-submission-checklist.md [verified, 2026-11-02]:
