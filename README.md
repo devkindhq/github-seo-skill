@@ -10,7 +10,7 @@
 GitHub SEO Skill is an Agent Skill for Claude Code that gets open-source GitHub repos found on
 Google and GitHub search. It audits a repo's name, description, topics and README, writes a
 search-ready README, runs a pre-publish secret and client-data check, and walks MCP servers
-through registry submissions such as the Official MCP Registry, Smithery, Glama and mcp.so.
+through registry submissions such as the Official MCP Registry, Glama and mcp.so.
 
 It works with any tool that supports the [Agent Skills](https://agentskills.io) format.
 

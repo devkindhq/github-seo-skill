@@ -4,17 +4,50 @@ Generalised from one real submission at `claude.ai/directory/manage` on 2026-11-
 [observed, 2026-11-02]. The portal and its checks change, so re-check each step before
 repeating this. Anything not seen during the run is marked [unverified].
 
+## Decide first
+
+Answer two questions before any plugin work [verified, 2026-11-05, Anthropic Software Directory
+Policy 1D and 3A]:
+
+1. Does the plugin collect user data or connect to a remote service? Then it needs "a clear,
+   accessible privacy policy link". Without one, do not submit yet.
+2. Does it collect or return personal data about people other than the user, such as emails or
+   profiles? Then tell the owner it may be refused even with a privacy policy, because software
+   must protect "the privacy interests of third parties".
+
+Submit or skip is the owner's call.
+
+If the answer is skip, change no files: the directory reads only what you submit. The plugin files
+(`.claude-plugin/`, `.mcp.json`, plugin skills) still serve everyone who installs from the repo,
+through its own `marketplace.json` or `/plugin marketplace add owner/repo`. Keep them unless the
+owner wants the plugin gone everywhere. To find other marketplaces that list the repo:
+
+```bash
+gh search code "owner/repo" --filename marketplace.json
+```
+
+The search finds only marketplaces in repos you can read, so zero results do not prove that
+nothing depends on the files.
+
 ## Prerequisites
 
-- A paid claude.ai plan [observed, 2026-11-02].
-- A public GitHub repo with `.claude-plugin/plugin.json` [observed, 2026-11-02].
-- A GitHub account with push access to the repo, used by the submitter [observed, 2026-11-02].
+- A paid claude.ai plan [observed, 2026-11-02]. On Team and Enterprise, the submitter needs the
+  Owner role or, on Enterprise, a custom role with the Directory permission [verified, 2026-11-02,
+  claude.com/docs/directory/publish.md].
+- A GitHub repo with `.claude-plugin/plugin.json` [observed, 2026-11-02]. The repo can stay
+  private while you validate and submit, but must be public before the listing goes live
+  [verified, 2026-11-02, claude.com/docs/plugins/submit.md].
+- A GitHub account with push access to the repo, used by the submitter [observed, 2026-11-02],
+  and connected on claude.ai in the submitting organisation [verified, 2026-11-02, same page].
+- The listing belongs to the organisation you submit from. Submit from the organisation that
+  should own it long term [verified, 2026-11-02, claude.com/docs/directory/publish.md].
 - Limits: at most 10 submissions per organisation per 24 hours (drafts and withdrawn
   submissions count), and one submission per repo and folder [observed, 2026-11-02].
 
 ## The five steps
 
-1. **Source.** Point the portal at the repo and folder.
+1. **Source.** In the portal, select Submit new, then Plugin bundle [verified, 2026-11-02,
+   claude.com/docs/plugins/submit.md]. Point the portal at the repo and folder.
 2. **Listing details.** Name, description, icon and related listing fields.
 3. **Data handling.** Questions on personal data, whether the plugin sends data to other
    services (declare this in the README), retention, and users under 18 [observed, 2026-11-02].
@@ -23,6 +56,24 @@ repeating this. Anything not seen during the run is marked [unverified].
    personally. An agent must not tick them on the owner's behalf.
 5. **Review and submit.** An automated scan runs first. Held items go to a human reviewer.
    Approval is not guaranteed, and no review-time estimate was shown [observed, 2026-11-02].
+
+## Prepare the plugin
+
+- The plugin folder is the folder that holds `.claude-plugin/plugin.json`, and installers get that
+  whole folder [verified, 2026-11-03, claude.com/docs/plugins/pre-submission-checklist.md]. If it
+  is the root of a repo that also holds the server's `package.json` and `yarn.lock`, every install
+  shows a note that the listed packages were not installed, because plugin installs do not support
+  yarn or pnpm lockfiles [observed, 2026-11-03, `claude plugin list`]. A server that runs from
+  npm through `npx` never uses those packages, so the note does not affect it [general].
+- Set `displayName`, and set `icon` to a path inside the plugin, such as `./assets/icon.png`. The
+  directory reads `icon`, `documentationUrl`, `supportUrl`, `privacyPolicyUrl` and
+  `termsOfServiceUrl` from `plugin.json` only [verified, 2026-11-03,
+  code.claude.com/docs/en/plugins-reference].
+- Add a README "Network access and data" section: what the plugin downloads, which hosts it calls,
+  what each request carries and what it stores. The checklist asks the README to describe
+  everything the plugin runs, sends or fetches [verified, 2026-11-03, pre-submission checklist].
+- Run `claude plugin validate .` in the plugin folder before you push. It checks syntax and schema
+  only, so the portal's Validate still runs [verified, 2026-11-03, pre-submission checklist].
 
 ## Validate
 
@@ -38,6 +89,23 @@ touches a fix [observed, 2026-11-02].
 | No display name or marketplace description | Listing fields incomplete | Add `displayName` in `plugin.json` and `description` in `marketplace.json` |
 
 All rows [observed, 2026-11-02].
+
+### Documented rules for packages and files
+
+From claude.com/docs/plugins/pre-submission-checklist.md [verified, 2026-11-02; the brand and
+`docker run` rows 2026-11-05]. The launcher rule lists `npx`, `bunx`, `pnpm dlx`, `yarn dlx`,
+`uvx`, `pipx run` and `uv run` only.
+
+| Rule | Result if broken |
+|---|---|
+| Pin every package a launcher runs to an exact version, such as `npx <pkg>@1.2.3` | Blocks, "Unpinned npx launcher" |
+| A launcher with an exact pin | Still held for a reviewer, "Runs a pinned npx or uvx package" |
+| `.npmrc` or another file that sets a registry or package source, in a plugin with a launcher | Blocks |
+| `package.json` beside `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock` or `bun.lockb` in the plugin folder root | Held for a reviewer, "Dependencies install from a lockfile". `yarn.lock` is not on the list |
+| `name`, `displayName` or `author.name` could be mistaken for a well-known brand that is not yours | Held for a reviewer, "Name matches a known brand" |
+| A local MCP server starts with something other than a file in the plugin, such as `docker run` | Held for a reviewer, "MCP server command wasn't read" |
+| Keep every file that is not an image or font under 256 KiB | Held for a reviewer |
+| Keep the plugin to 512 files or fewer | Held for a reviewer |
 
 ### Scanner false positives (second submission, 2026-11-02)
 
@@ -73,3 +141,8 @@ The review step offers an auto-publish toggle. Two update modes were shown [obse
 - `anthropics/claude-plugins-official` is by partner contact only [observed, 2026-11-02].
 - Your own `marketplace.json` lets users run `/plugin marketplace add <owner>/<repo>` [general].
 - A skills.sh listing is automatic, built from `npx skills add` telemetry [observed, 2026-11-02].
+- `/plugin install <name> --marketplace <owner>/<repo>` adds the marketplace and installs in one
+  step. It needs Claude Code v2.1.275 or later [verified, 2026-11-02,
+  code.claude.com/docs/en/plugins/publish.md].
+- The directory no longer accepts desktop extension (MCPB) listings. Ship a local MCP server
+  inside a plugin bundle instead [verified, 2026-11-02, claude.com/docs/directory/publish.md].

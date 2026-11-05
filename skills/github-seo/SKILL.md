@@ -1,6 +1,6 @@
 ---
 name: github-seo
-description: Makes an open-source GitHub repo discoverable and safe to publish. Audits the repo name, description, topics and README for search, writes a search-ready README, runs a pre-publish secret and client-data check, and guides the launch sequence. Covers MCP server registry submissions (Official MCP Registry, Smithery, Glama, mcp.so). Use when the user wants more stars, traffic or search visibility for a repo, is about to open-source a project, asks for GitHub SEO or repo SEO, or wants to publish an MCP server. Not for general website SEO.
+description: Makes an open-source GitHub repo discoverable and safe to publish. Audits the repo name, description, topics and README for search, writes a search-ready README, runs a pre-publish secret and client-data check, and guides the launch sequence. Covers MCP server registry submissions (Official MCP Registry, Glama, mcp.so) and the Claude plugin directory. Use when the user wants more stars, traffic or search visibility for a repo, is about to open-source a project, asks for GitHub SEO or repo SEO, or wants to publish an MCP server. Not for general website SEO.
 license: MIT
 ---
 
@@ -51,7 +51,7 @@ python3 scripts/check_repo_seo.py owner/repo
 ```
 
 It reports pass, warn or fail for the description, topics, homepage, license, README shape,
-and community files, and prints the one lever it cannot check (the social preview image).
+community files and retired-platform leftovers, and prints the one lever it cannot check (the social preview image).
 Fix failures first, then warnings.
 
 ## Step A: plain repo checklist
@@ -78,19 +78,21 @@ Fix failures first, then warnings.
    produces the artifact the next needs.
 9. **Upstream galleries and awesome-lists** only once the repo is complete and has real stars.
    Maintainers reject cold, thin submissions.
-10. **Claude plugin directory.** If the repo ships a Claude plugin, follow
-    `references/claude-plugin-directory.md` for the submission portal, Validate findings and
-    the other plugin distribution routes.
+10. **Claude plugin directory.** If the repo ships or could ship a Claude plugin, start with
+    "Decide first" in `references/claude-plugin-directory.md`. It says whether to submit, then
+    covers the submission portal, Validate findings and the other plugin distribution routes.
 
 ## Step B: MCP server checklist (after Step A)
 
 Start with `references/mcp-install-and-metadata.md`: choose the package type (npm, PyPI, OCI and
 others each have their own ownership check), complete `server.json` including `websiteUrl`, and
 lay out the README install routes per client. Then use `references/mcp-registry-checklist.md`. It covers the Official MCP Registry (`server.json`
-plus the `mcp-publisher` CLI), Smithery, Glama, mcp.so, mcpservers.org, Cursor Directory, which
+plus the `mcp-publisher` CLI), Glama, mcp.so, mcpservers.org, Cursor Directory, which
 registries auto-ingest from the Official one, and common gotchas (stale listings under a personal
-account, publish order, domain presence). Pitfalls from real runs (org namespace 403, OCI
+account, the Glama build config, publish order, domain presence). Pitfalls from real runs (org namespace 403, OCI
 build and label, leaked-history scrub) are in the install reference.
+Submit only to the registries in that checklist, never to one in its "Retired platforms" table.
+After you submit, confirm each listing with `python3 scripts/check_listings.py owner/repo`.
 
 ## What not to do
 

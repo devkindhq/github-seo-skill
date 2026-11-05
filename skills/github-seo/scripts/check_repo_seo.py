@@ -8,6 +8,7 @@ import json
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 results = []
 
@@ -108,6 +109,26 @@ for label, candidates in [
 ]:
     ok = bool(files & candidates)
     record("PASS" if ok else "WARN", label, "present" if ok else "missing in repo root")
+
+# Retired platforms: the table in the registry checklist is the single source of names.
+checklist = Path(__file__).resolve().parent.parent / "references" / "mcp-registry-checklist.md"
+text = checklist.read_text()
+if "## Retired platforms" not in text:
+    sys.exit(f"{checklist} has no '## Retired platforms' section")
+section = text.split("## Retired platforms", 1)[1].split("\n## ", 1)[0]
+paths = [
+    e["path"]
+    for e in json.loads(gh("api", f"repos/{slug}/git/trees/HEAD?recursive=1"))["tree"]
+    if e["type"] == "blob"
+]
+for platform in re.findall(r"^\| \*\*(.+?)\*\* \|", section, flags=re.M):
+    key = platform.lower()
+    hits = [p for p in paths if key in p.lower()]
+    hits += [f"README.md:{n}" for n, line in enumerate(readme.splitlines(), 1) if key in line.lower()]
+    if hits:
+        record("FAIL", f"retired: {platform}", f"remove {', '.join(hits)}. Also run: git grep -n -i {key}")
+    else:
+        record("PASS", f"retired: {platform}", "no files or README lines")
 
 # MCP server metadata (only when a server.json is present)
 if "server.json" in files:

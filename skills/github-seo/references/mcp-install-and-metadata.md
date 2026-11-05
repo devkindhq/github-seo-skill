@@ -20,6 +20,13 @@ mismatch is the most common publish failure.
 | Docker/OCI | `oci` | Image label `io.modelcontextprotocol.server.name` equals the `server.json` `name` |
 | MCPB bundle | `mcpb` | URL contains "mcp", and `fileSha256` is set (clients check the hash) |
 
+npm timing: the registry checks that the exact version exists on npm. Right after `npm publish`
+it can reject the version with "NPM package '...' exists, but version 'X' was not found (status:
+404). A newly published release can take a moment to appear..." [verified, 2026-11-02, registry
+`internal/validators/registries/npm.go`]. Publish to the registry only after
+`npm view <pkg>@<version>` returns the version. The version became visible about one minute
+after publish [observed on a Devkind npm MCP server, 2026-11-02].
+
 OCI details [verified]: supported hosts are Docker Hub, `ghcr.io`, Google Artifact Registry,
 `*.azurecr.io` and `mcr.microsoft.com`. The `identifier` is `registry/namespace/repository:tag`
 (a digest also works). Pin a version tag, not `latest`. Put the `LABEL` in the Dockerfile and
@@ -71,10 +78,17 @@ Schema `2025-12-11` [verified]:
 | `repository` | `url` and `source` | Source link for inspection. |
 | `icons` | Optional | PNG or JPEG for UI display. |
 | `packages` | Array | One entry per install route (see section 1). |
-| `_meta` | Vendor extension | Free-form. Put author, tool list and website here as a bonus, not instead of `websiteUrl`. |
+| `_meta` | Vendor extension | Only `io.modelcontextprotocol.registry/publisher-provided` is kept, max 4096 bytes of JSON. Put author and website here as a bonus, not instead of `websiteUrl`. |
 
 Observed gap: a live entry that put the website only under `_meta` and left `websiteUrl` empty
 [observed, 2026-10-31]. Whether downstream directories display `_meta` is unknown, so fill both.
+
+`_meta` limit [verified, 2026-11-02, registry `internal/validators/validators.go`
+`validatePublisherExtensions` and `docs/reference/server-json/official-registry-requirements.md`]:
+the registry drops every other `_meta` key, and fails the publish when the publisher-provided
+object exceeds 4 KB, with "publisher-provided extension exceeds 4KB limit (N bytes)". A full
+tool-name list can pass that limit. A 125-tool server failed at 4474 bytes [observed on a Devkind
+npm MCP server, 2026-11-02]. Keep the tool list out of `_meta` for a large server.
 
 Environment variables go in `packages[].environmentVariables` with `name`, `description`,
 `isRequired` and `isSecret`. Names only, never values.
@@ -125,12 +139,8 @@ server needs them.
 | File | Feeds | Notes |
 |---|---|---|
 | `server.json` | Official MCP Registry | Section 3. Commit it to the repo root. |
-| `smithery.yaml` | Smithery | `name`, `description`, `vendor`, `homepage`, `license`, `startCommand` with a config schema [observed]. |
 | `manifest.json` | MCPB bundle, desktop installs | Carries `author` with name and URL, `repository`, and `user_config` prompts for credentials [observed]. |
 | README badges | Humans | "Built by <org>" badge linking to the homepage. |
-
-`smithery.yaml` with a docker `commandFunction` was copied from another published server README and is
-[unverified] against Smithery's current docs. Check them before reusing it.
 
 Keep one source of truth for the description, tool list and homepage, and copy it into each file.
 A version drift between `package.json`, `server.json` and `manifest.json` is easy to introduce
@@ -138,7 +148,7 @@ A version drift between `package.json`, `server.json` and `manifest.json` is eas
 
 ## 6. Make the org visible in every listing
 
-- Same organisation name and the same homepage URL in `server.json` (`websiteUrl`), `smithery.yaml`,
+- Same organisation name and the same homepage URL in `server.json` (`websiteUrl`),
   `manifest.json`, the README byline and the repo About box.
 - Link to a page on a domain you own that is specific to the server or its category, not only the
   home page.
@@ -190,4 +200,4 @@ directory that renders the README. Keep it specific to the server's audience, no
 - One link to a specific page on a domain you own (a services, consulting or product page, not
   only the home page) plus a contact address.
 - Request each linked URL first and confirm it returns 200.
-- Use the same organisation name and homepage as in `server.json`, `smithery.yaml` and the About box.
+- Use the same organisation name and homepage as in `server.json` and the About box.
