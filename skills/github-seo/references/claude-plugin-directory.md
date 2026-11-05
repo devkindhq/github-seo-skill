@@ -4,6 +4,31 @@ Generalised from one real submission at `claude.ai/directory/manage` on 2026-11-
 [observed, 2026-11-02]. The portal and its checks change, so re-check each step before
 repeating this. Anything not seen during the run is marked [unverified].
 
+## Decide first
+
+Answer two questions before any plugin work [verified, 2026-11-05, Anthropic Software Directory
+Policy 1D and 3A]:
+
+1. Does the plugin collect user data or connect to a remote service? Then it needs "a clear,
+   accessible privacy policy link". Without one, do not submit yet.
+2. Does it collect or return personal data about people other than the user, such as emails or
+   profiles? Then tell the owner it may be refused even with a privacy policy, because software
+   must protect "the privacy interests of third parties".
+
+Submit or skip is the owner's call.
+
+If the answer is skip, change no files: the directory reads only what you submit. The plugin files
+(`.claude-plugin/`, `.mcp.json`, plugin skills) still serve everyone who installs from the repo,
+through its own `marketplace.json` or `/plugin marketplace add owner/repo`. Keep them unless the
+owner wants the plugin gone everywhere. To find other marketplaces that list the repo:
+
+```bash
+gh search code "owner/repo" --filename marketplace.json
+```
+
+The search finds only marketplaces in repos you can read, so zero results do not prove that
+nothing depends on the files.
+
 ## Prerequisites
 
 - A paid claude.ai plan [observed, 2026-11-02]. On Team and Enterprise, the submitter needs the
@@ -67,7 +92,9 @@ All rows [observed, 2026-11-02].
 
 ### Documented rules for packages and files
 
-From claude.com/docs/plugins/pre-submission-checklist.md [verified, 2026-11-02]:
+From claude.com/docs/plugins/pre-submission-checklist.md [verified, 2026-11-02; the brand and
+`docker run` rows 2026-11-05]. The launcher rule lists `npx`, `bunx`, `pnpm dlx`, `yarn dlx`,
+`uvx`, `pipx run` and `uv run` only.
 
 | Rule | Result if broken |
 |---|---|
@@ -75,6 +102,8 @@ From claude.com/docs/plugins/pre-submission-checklist.md [verified, 2026-11-02]:
 | A launcher with an exact pin | Still held for a reviewer, "Runs a pinned npx or uvx package" |
 | `.npmrc` or another file that sets a registry or package source, in a plugin with a launcher | Blocks |
 | `package.json` beside `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock` or `bun.lockb` in the plugin folder root | Held for a reviewer, "Dependencies install from a lockfile". `yarn.lock` is not on the list |
+| `name`, `displayName` or `author.name` could be mistaken for a well-known brand that is not yours | Held for a reviewer, "Name matches a known brand" |
+| A local MCP server starts with something other than a file in the plugin, such as `docker run` | Held for a reviewer, "MCP server command wasn't read" |
 | Keep every file that is not an image or font under 256 KiB | Held for a reviewer |
 | Keep the plugin to 512 files or fewer | Held for a reviewer |
 

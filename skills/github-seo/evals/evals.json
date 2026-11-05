@@ -9,7 +9,7 @@
     { "type": "should_trigger", "prompt": "what topics and description should I put on this repo so people find it" },
     { "type": "should_trigger", "prompt": "plan the launch for our new open source tool, reddit, hn, the lot" },
     { "type": "should_trigger", "prompt": "is it safe to make this private repo public" },
-    { "type": "should_trigger", "prompt": "submit my mcp server to smithery and glama" },
+    { "type": "should_trigger", "prompt": "submit my mcp server to glama and mcp.so" },
     { "type": "should_trigger", "prompt": "audit the discoverability of github.com/acme/widget-cli" },
     { "type": "should_not_trigger", "prompt": "improve the SEO of my marketing website" },
     { "type": "should_not_trigger", "prompt": "write a blog post about our product" },

@@ -139,7 +139,6 @@ server needs them.
 | File | Feeds | Notes |
 |---|---|---|
 | `server.json` | Official MCP Registry | Section 3. Commit it to the repo root. |
-| `smithery.yaml` | Nothing now | Smithery stopped hosted deploys on 31 Oct 2026. Do not add or update this file [verified, 2026-11-02, smithery.ai/future]. |
 | `manifest.json` | MCPB bundle, desktop installs | Carries `author` with name and URL, `repository`, and `user_config` prompts for credentials [observed]. |
 | README badges | Humans | "Built by <org>" badge linking to the homepage. |
 

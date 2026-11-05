@@ -32,7 +32,6 @@ Write the fields every listing asks for, then reuse them verbatim so listings st
 |---|---|---|
 | **Official MCP Registry** | A `server.json` in your project, published with the `mcp-publisher` CLI. Names take the form `io.github.<github-user-or-org>/<name>` and you must authenticate with access to that namespace [verified, 2026-10-29, registry README]. For an org namespace the device flow is not enough, see `mcp-install-and-metadata.md` section 2 [verified, 2026-11-02]. A pull request to the registry repo does not publish a server [verified, 2026-10-29]. | Direct. Do this first, because other registries ingest from it. |
 | **Docker MCP Registry** | PR adding `servers/<name>/server.yaml`, Docker team review [verified, 2026-11-02]. | Optional second route, see `mcp-install-and-metadata.md` section 8. |
-| **Smithery** | On 31 Oct 2026 its hosted server URLs, API, Connect and Toolbox, accounts and API keys, and CLI and SDKs stop working (current versions marked deprecated). It remains a public, non-proxied MCP registry powered by Arcade.dev [verified, 2026-11-02, smithery.ai/future]. | None. Do not publish to Smithery, and skip deploy or `smithery.yaml` work. An existing listing stays as a passive registry entry. |
 | **PulseMCP** | Ingests from the Official Registry [observed]. | None once the Official entry is live. |
 | **mcpbench.ai** | Indexes from the Official Registry, can lag [observed]. | Verify it appears. |
 | **Glama** | Manual submission, goes to review [observed]. A listing can exist before you submit [observed, 2026-11-02]. Approval comes by email [observed, 2026-11-03]. The listing gets tools and a score only after a Glama build passes [observed, 2026-11-03]. | Search Glama first. Claim an existing listing (see Gotchas), else submit with Add Server and wait for the email. Then set the build (see Gotchas). |
@@ -42,14 +41,25 @@ Write the fields every listing asks for, then reuse them verbatim so listings st
 | **MCPMarket** | Observed to index without a submission form [observed]. | Verify the listing and description. |
 | **Community lists** (selective, unclear criteria) | Small subsets of servers, links may be nofollow [observed]. | Low priority. |
 
+## Retired platforms
+
+Do not submit to these. Remove their config files, scripts and doc mentions, but keep released
+changelog entries. The Step 2 audit
+(`scripts/check_repo_seo.py`) reads this table and flags any file path or README line that names
+a platform here. To retire a platform, add a row.
+
+| Platform | Status |
+|---|---|
+| **Smithery** | Out of service. Its hosting, API, accounts, CLI and SDKs shut down on 31 Oct 2026. Only a read-only directory remains, with nothing to publish [verified, 2026-11-05, smithery.ai/future]. |
+
 ## Gotchas
 
 - **Empty `websiteUrl`.** Put the homepage in the official `websiteUrl` field, not only under
   `_meta`. See `mcp-install-and-metadata.md`.
 - **Version drift.** Keep `package.json`, `server.json` and `manifest.json` on the same version.
 - **Stale listings under a personal account.** If the server was ever published from a personal
-  GitHub account before the org account existed, that listing can persist on registries such as
-  Smithery. Find it and have it removed, through the registry's support if there is no self-service delete, though Smithery, now a passive registry, may no longer remove listings.
+  GitHub account before the org account existed, that listing can persist on other registries. Find it
+  and have it removed, through the registry's support if there is no self-service delete.
 - **Unclaimed Glama listing.** An npm-published server with a private repo already had an
   unclaimed Glama page with an older README [observed on a Devkind npm MCP server, 2026-11-02].
   The claim box on a Glama server page says access comes from the repo, with no form
@@ -118,3 +128,14 @@ Order: make the repo public, get the Glama listing, then open the awesome-list P
 
 Most manual registries have a review queue and no way to speed it up. Track pending reviews in a
 note and check back, rather than resubmitting.
+
+Check the listings with one command. It needs `gh` logged in and reads `server.json` from the repo:
+
+```bash
+python3 scripts/check_listings.py owner/repo
+```
+
+It finds the latest Official MCP Registry entry and checks the package it names: the npm version
+matches, or the OCI image tag exists on Docker Hub. It also checks that the Glama page exists, and
+whether awesome-mcp-servers lists the repo or has a pull request for it. Directories that need a login, such as the Claude plugin
+directory, stay a manual check.
