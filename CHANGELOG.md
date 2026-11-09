@@ -8,7 +8,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - MCP distribution facts (2026-11-02): Official MCP Registry `_meta` 4 KB limit and npm version timing, Glama listing claim, awesome-mcp-servers requirements, Claude plugin directory rules.
 - MCP distribution facts (2026-11-03): Glama build config and stale listings, awesome-mcp-servers bot and entry rules, Claude plugin preparation.
 - Retired platforms (2026-11-05): one table in `references/mcp-registry-checklist.md`; guidance for retired platforms removed.
-- Claude plugin directory (2026-11-05): a "Decide first" check for plugins that return third-party personal data, keep plugin files when not submitting, and two more documented holds (brand name, `docker run`).
+- Claude plugin directory (2026-11-05): a "Decide first" check for plugins that return third-party personal data, keep plugin files when not submitting, and two more documented holds (brand name, MCP server command).
 
 ### Added
 - `scripts/check_repo_seo.py` flags files and README lines that name a retired platform.

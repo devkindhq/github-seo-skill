@@ -85,8 +85,13 @@ for pkg in live.get("packages", []):
         record("PASS" if status == 200 else "FAIL", "Docker Hub tag", f"{ident} (HTTP {status})")
 
 # Glama
-status, _ = get(f"https://glama.ai/mcp/servers/{slug}")
-record("PASS" if status == 200 else "FAIL", "Glama", f"https://glama.ai/mcp/servers/{slug} (HTTP {status})")
+glama = f"https://glama.ai/mcp/servers/{slug}"
+status, _ = get(glama)
+if status == 404:
+    # Glama can list a server under a name that is not the GitHub owner/repo.
+    record("WARN", "Glama", f"{glama} (HTTP 404). Search glama.ai for the server by hand.")
+else:
+    record("PASS" if status == 200 else "FAIL", "Glama", f"{glama} (HTTP {status})")
 
 # awesome-mcp-servers: listed in the README, or a pull request for the repo
 listed = gh("api", "repos/punkpeye/awesome-mcp-servers/contents/README.md", "-H", "Accept: application/vnd.github.raw")

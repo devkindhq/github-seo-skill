@@ -92,8 +92,8 @@ All rows [observed, 2026-11-02].
 
 ### Documented rules for packages and files
 
-From claude.com/docs/plugins/pre-submission-checklist.md [verified, 2026-11-02; the brand and
-`docker run` rows 2026-11-05]. The launcher rule lists `npx`, `bunx`, `pnpm dlx`, `yarn dlx`,
+From claude.com/docs/plugins/pre-submission-checklist.md [verified, 2026-11-02; the brand row
+2026-11-05; the MCP server command row 2026-11-09]. The launcher rule lists `npx`, `bunx`, `pnpm dlx`, `yarn dlx`,
 `uvx`, `pipx run` and `uv run` only.
 
 | Rule | Result if broken |
@@ -103,9 +103,12 @@ From claude.com/docs/plugins/pre-submission-checklist.md [verified, 2026-11-02; 
 | `.npmrc` or another file that sets a registry or package source, in a plugin with a launcher | Blocks |
 | `package.json` beside `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock` or `bun.lockb` in the plugin folder root | Held for a reviewer, "Dependencies install from a lockfile". `yarn.lock` is not on the list |
 | `name`, `displayName` or `author.name` could be mistaken for a well-known brand that is not yours | Held for a reviewer, "Name matches a known brand" |
-| A local MCP server starts with something other than a file in the plugin, such as `docker run` | Held for a reviewer, "MCP server command wasn't read" |
+| Start each local MCP server by running a file in the plugin with plain arguments, not through a shell or a package-manager script such as `npm run` | Held for a reviewer, "MCP server command wasn't read" |
 | Keep every file that is not an image or font under 256 KiB | Held for a reviewer |
 | Keep the plugin to 512 files or fewer | Held for a reviewer |
+
+The checklist does not name `docker run`. A `docker run` command does not run a file in the plugin,
+so expect the same "MCP server command wasn't read" hold [inference, 2026-11-09].
 
 ### Scanner false positives (second submission, 2026-11-02)
 

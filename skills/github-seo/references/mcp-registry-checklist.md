@@ -136,6 +136,7 @@ python3 scripts/check_listings.py owner/repo
 ```
 
 It finds the latest Official MCP Registry entry and checks the package it names: the npm version
-matches, or the OCI image tag exists on Docker Hub. It also checks that the Glama page exists, and
-whether awesome-mcp-servers lists the repo or has a pull request for it. Directories that need a login, such as the Claude plugin
-directory, stay a manual check.
+matches, or the OCI image tag exists on Docker Hub. It also checks that the Glama page exists (a 404
+is a warning, because Glama can list a server under another name), and whether awesome-mcp-servers
+lists the repo or has a pull request for it. Directories that need a login, such as the Claude
+plugin directory, stay a manual check.
