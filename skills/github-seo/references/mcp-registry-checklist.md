@@ -45,7 +45,7 @@ Write the fields every listing asks for, then reuse them verbatim so listings st
 
 Do not submit to these. Remove their config files, scripts and doc mentions, but keep released
 changelog entries. The Step 2 audit
-(`scripts/check_repo_seo.py`) reads this table and flags any file path or README line that names
+(`audit-checks.md`) uses this table and flags any file path or README line that names
 a platform here. To retire a platform, add a row.
 
 | Platform | Status |
@@ -129,14 +129,10 @@ Order: make the repo public, get the Glama listing, then open the awesome-list P
 Most manual registries have a review queue and no way to speed it up. Track pending reviews in a
 note and check back, rather than resubmitting.
 
-Check the listings with one command. It needs `gh` logged in and reads `server.json` from the repo:
+Check the listings with the listing checks in `audit-checks.md`. They need `gh` logged in and read `server.json` from the repo.
 
-```bash
-python3 scripts/check_listings.py owner/repo
-```
-
-It finds the latest Official MCP Registry entry and checks the package it names: the npm version
-matches, or the OCI image tag exists on Docker Hub. It also checks that the Glama page exists (a 404
+They find the latest Official MCP Registry entry and check the package it names: the npm version
+matches, or the OCI image tag exists on Docker Hub. They also check that the Glama page exists (a 404
 is a warning, because Glama can list a server under another name), and whether awesome-mcp-servers
 lists the repo or has a pull request for it. Directories that need a login, such as the Claude
 plugin directory, stay a manual check.

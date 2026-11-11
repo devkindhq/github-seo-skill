@@ -44,7 +44,7 @@ Then ask in plain words, for example "audit github.com/you/your-repo for search 
 | Stage | What you get |
 |---|---|
 | Safety pass | Full-history secret scan and client-data check before anything goes public |
-| Audit | A read-only script scores the description, topics, homepage, license, README shape and community files |
+| Audit | Read-only GitHub CLI checks score the description, topics, homepage, license, README shape and community files |
 | README | An eight-section template aimed at the search snippet, 400 to 700 words |
 | Metadata | Repo slug, About text, topics, Website field and social preview guidance |
 | Launch | A tested order: repo, write-up, community, wider channels, template galleries |
@@ -52,19 +52,17 @@ Then ask in plain words, for example "audit github.com/you/your-repo for search 
 
 ## Run the audit yourself
 
-Needs the [GitHub CLI](https://cli.github.com) logged in. The script changes nothing.
+Needs the [GitHub CLI](https://cli.github.com) logged in. The checks change nothing.
 
-```bash
-python3 skills/github-seo/scripts/check_repo_seo.py owner/repo
-```
-
-It prints `PASS`, `WARN` or `FAIL` per check and exits non-zero on any `FAIL`. The social preview
-image cannot be read or set through the CLI, so it is listed as a manual step.
+Follow [audit-checks.md](skills/github-seo/references/audit-checks.md): four `gh` commands read the
+repo, and a table gives pass, warn or fail for each check. The social preview image cannot be read
+or set through the CLI, so it is listed as a manual step.
 
 ## Network access and data
 
-This repo collects no data and runs no server. The audit script only calls the GitHub CLI (`gh`)
-you have logged in, using read-only requests. When the skill guides an MCP server submission, it
+This repo collects no data and runs no server. The audit only calls the GitHub CLI (`gh`)
+you have logged in, using read-only requests. The listing checks read public pages of the Official
+MCP Registry, npm, Docker Hub and Glama. When the skill guides an MCP server submission, it
 tells you to look up a server on the Official MCP Registry
 (`https://registry.modelcontextprotocol.io`), and the publishing steps use the `mcp-publisher`
 tool, which sends your server metadata to that registry. Nothing is sent unless you run those steps.
@@ -82,9 +80,8 @@ The skill is built to repeat those labels when it reports back, instead of prese
 ## Repository layout
 
 ```
-skills/github-seo/        # the skill: SKILL.md, references/, scripts/, evals/
+skills/github-seo/        # the skill: SKILL.md, references/, evals/
 .claude-plugin/           # plugin and marketplace manifests
-scripts/validate_skill.py # checks frontmatter, evals, manifests and links (runs in CI)
 ```
 
 ## Related projects

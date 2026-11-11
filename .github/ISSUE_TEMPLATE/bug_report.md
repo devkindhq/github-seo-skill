@@ -1,6 +1,6 @@
 ---
 name: Wrong or outdated claim
-about: A claim, step or link in the skill is wrong, or the audit script misbehaves
+about: A claim, step or link in the skill is wrong, or the audit checks misbehave
 labels: bug
 ---
 

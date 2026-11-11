@@ -8,11 +8,14 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - MCP distribution facts (2026-11-02): Official MCP Registry `_meta` 4 KB limit and npm version timing, Glama listing claim, awesome-mcp-servers requirements, Claude plugin directory rules.
 - MCP distribution facts (2026-11-03): Glama build config and stale listings, awesome-mcp-servers bot and entry rules, Claude plugin preparation.
 - Retired platforms (2026-11-05): one table in `references/mcp-registry-checklist.md`; guidance for retired platforms removed.
+- Claude plugin directory (2026-11-11): the file types and components the directory accepts from an organisation that is not Verified, and commands that list the files the directory is likely to refuse.
 - Claude plugin directory (2026-11-05): a "Decide first" check for plugins that return third-party personal data, keep plugin files when not submitting, and two more documented holds (brand name, MCP server command).
 
 ### Added
-- `scripts/check_repo_seo.py` flags files and README lines that name a retired platform.
-- `scripts/check_listings.py`: read-only check of the Official MCP Registry entry, its npm or Docker Hub package, Glama and awesome-mcp-servers.
+- `references/audit-checks.md`: the repo audit and the listing checks as read-only GitHub CLI commands and tables. The audit flags files and README lines that name a retired platform. The listing checks cover the Official MCP Registry entry, its npm or Docker Hub package, Glama and awesome-mcp-servers.
+
+### Removed
+- `skills/github-seo/scripts/check_repo_seo.py`, `scripts/validate_skill.py` and the SVG assets. The Claude plugin directory accepts only Markdown, text, JSON, YAML and PNG, JPEG, GIF, WebP or ICO files from an organisation that is not Verified. CI runs the validator checks inline.
 
 ## [0.2.0] - 2026-11-02
 

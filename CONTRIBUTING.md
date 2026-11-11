@@ -14,7 +14,7 @@ Thanks for helping. The most valuable contribution is a correction or addition b
 
 1. Fork and branch from `main`.
 2. Make the change.
-3. Run `python3 scripts/validate_skill.py`. It must print `ok`.
+3. CI checks the skill frontmatter, the evals, the manifests and the internal links on each pull request.
 4. If you changed when the skill should trigger, update `skills/github-seo/evals/evals.json`.
 5. Add a line to `CHANGELOG.md` under an Unreleased heading.
 6. Open a pull request and fill in the template.

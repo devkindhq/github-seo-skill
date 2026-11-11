@@ -34,7 +34,7 @@
       "type": "quality",
       "prompt": "Audit github.com/acme/widget-cli for search visibility",
       "expected_behavior": [
-        "runs scripts/check_repo_seo.py rather than guessing at the repo state",
+        "runs the repo audit in references/audit-checks.md rather than guessing at the repo state",
         "reports failures before warnings",
         "tells the owner the social preview image must be uploaded manually in Settings",
         "does not add inaccurate topics or keyword-stuff the description"

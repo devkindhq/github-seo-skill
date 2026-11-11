@@ -44,14 +44,10 @@ Details and the publish-or-not framework: `references/publish-safety.md`.
 
 ## Step 2: audit what exists
 
-Run the read-only audit. It needs the GitHub CLI (`gh`) logged in.
+Run the read-only repo audit in `references/audit-checks.md`. It needs the GitHub CLI (`gh`) logged in.
 
-```bash
-python3 scripts/check_repo_seo.py owner/repo
-```
-
-It reports pass, warn or fail for the description, topics, homepage, license, README shape,
-community files and retired-platform leftovers, and prints the one lever it cannot check (the social preview image).
+It gives pass, warn or fail for the description, topics, homepage, license, README shape,
+community files and retired-platform leftovers, and names the one lever no command can check (the social preview image).
 Fix failures first, then warnings.
 
 ## Step A: plain repo checklist
@@ -92,7 +88,7 @@ registries auto-ingest from the Official one, and common gotchas (stale listings
 account, the Glama build config, publish order, domain presence). Pitfalls from real runs (org namespace 403, OCI
 build and label, leaked-history scrub) are in the install reference.
 Submit only to the registries in that checklist, never to one in its "Retired platforms" table.
-After you submit, confirm each listing with `python3 scripts/check_listings.py owner/repo`.
+After you submit, confirm each listing with the listing checks in `references/audit-checks.md`.
 
 ## What not to do
 
