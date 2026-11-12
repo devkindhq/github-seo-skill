@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Read-only GitHub repo SEO audit. Usage: check_repo_seo.py [owner/repo]
+"""Read-only GitHub repo SEO and security audit.
+Usage: check_repo_seo.py [owner/repo] [--security-only | --skip-security]
 
-Needs the GitHub CLI (`gh`) logged in. Makes no changes. Exits 1 if any check fails.
+Needs the GitHub CLI (`gh`) logged in. Makes no changes (GET requests only). Exits 1 if any check fails.
+Security checks that need admin rights print MANUAL instead of guessing.
 """
 import base64
 import json
 import re
 import subprocess
 import sys
+from urllib.parse import quote
 
 results = []
 
@@ -23,15 +26,135 @@ def record(level, name, detail):
     results.append((level, name, detail))
 
 
-target = sys.argv[1:2]
+def api(path):
+    """GET via gh. Returns (status, parsed JSON or None). Never raises, never prints credentials."""
+    out = subprocess.run(["gh", "api", path], capture_output=True, text=True)
+    if out.returncode == 0:
+        try:
+            return 200, json.loads(out.stdout) if out.stdout.strip() else {}
+        except ValueError:
+            return 200, None
+    m = re.search(r"HTTP (\d{3})", out.stderr)
+    return (int(m.group(1)) if m else 0), None
+
+
+def security_checks(slug, default_branch):
+    """Repo security and permission checks. Reports only; never changes settings."""
+    need = "could not check, needs admin"
+    st, repo = api(f"repos/{slug}")
+    if st != 200 or not isinstance(repo, dict):
+        record("MANUAL", "security", f"could not read repo settings (HTTP {st or 'error'})")
+        return
+    default_branch = repo.get("default_branch") or default_branch
+    admin = bool((repo.get("permissions") or {}).get("admin"))
+    sa = repo.get("security_and_analysis")
+    record("PASS" if admin else "WARN", "token permission", "admin" if admin else "read or write only. Settings checks below are limited.")
+
+    def branch_rules(branch):
+        st_r, rules = api(f"repos/{slug}/rules/branches/{quote(branch, safe='')}")
+        types = {r.get("type") for r in rules} if st_r == 200 and isinstance(rules, list) else set()
+        legacy = None
+        if admin:
+            st_p, prot = api(f"repos/{slug}/branches/{quote(branch, safe='')}/protection")
+            if st_p == 200 and isinstance(prot, dict):
+                legacy = prot
+                if prot.get("required_pull_request_reviews"):
+                    types.add("pull_request")
+                if not (prot.get("allow_deletions") or {}).get("enabled"):
+                    types.add("deletion")
+                if not (prot.get("allow_force_pushes") or {}).get("enabled"):
+                    types.add("non_fast_forward")
+        return st_r, types, legacy
+
+    def report_branch(label, branch, need_pr):
+        st_r, types, _ = branch_rules(branch)
+        if st_r != 200:
+            record("MANUAL", label, f"rules endpoint returned HTTP {st_r or 'error'} for {branch}")
+            return
+        wanted = ["deletion", "non_fast_forward"] + (["pull_request"] if need_pr else [])
+        missing = [t for t in wanted if t not in types]
+        names = {"deletion": "deletion blocked", "non_fast_forward": "force-push blocked", "pull_request": "PR required"}
+        if not missing:
+            record("PASS", label, f"{branch}: " + ", ".join(names[t] for t in wanted))
+        elif not types and not admin:
+            record("MANUAL", label, f"{branch}: no active ruleset seen; legacy branch protection {need}")
+        else:
+            note = "" if admin else f" (legacy branch protection {need})"
+            record("FAIL" if not types else "WARN", label, f"{branch}: missing " + ", ".join(names[t] for t in missing) + note)
+
+    report_branch("default branch rules", default_branch, True)
+
+    if repo.get("has_pages"):
+        st_g, pg = api(f"repos/{slug}/pages")
+        src = (pg or {}).get("source") if st_g == 200 and isinstance(pg, dict) else None
+        if src and src.get("branch"):
+            if src["branch"] == default_branch:
+                record("PASS", "pages branch rules", f"publishes from {default_branch}, covered above")
+            else:
+                report_branch("pages branch rules", src["branch"], False)
+        elif st_g == 200 and isinstance(pg, dict):
+            record("MANUAL", "pages branch rules", f"build_type {pg.get('build_type')}: check the github-pages environment deployment rule in Settings > Environments")
+        else:
+            record("MANUAL", "pages branch rules", f"Pages is on but the source could not be read (HTTP {st_g or 'error'})")
+
+    if isinstance(sa, dict):
+        for key, label in (("secret_scanning", "secret scanning"), ("secret_scanning_push_protection", "push protection"), ("dependabot_security_updates", "dependabot security updates")):
+            status = (sa.get(key) or {}).get("status")
+            record("PASS" if status == "enabled" else "WARN", label, status or "not reported")
+    else:
+        for label in ("secret scanning", "push protection", "dependabot security updates"):
+            record("MANUAL", label, need)
+    if admin:
+        st_v, _ = api(f"repos/{slug}/vulnerability-alerts")
+        record("PASS" if st_v == 200 else "WARN", "dependabot alerts", "enabled" if st_v == 200 else "disabled (HTTP 404)" if st_v == 404 else f"HTTP {st_v or 'error'}")
+    else:
+        record("MANUAL", "dependabot alerts", need)
+
+    st_p, pvr = api(f"repos/{slug}/private-vulnerability-reporting")
+    if st_p == 200 and isinstance(pvr, dict):
+        record("PASS" if pvr.get("enabled") else "WARN", "private vulnerability reporting", "enabled" if pvr.get("enabled") else "disabled. SECURITY.md should say where to report.")
+    else:
+        record("MANUAL", "private vulnerability reporting", f"HTTP {st_p or 'error'}, {need}")
+
+    st_w, wf = api(f"repos/{slug}/actions/permissions/workflow")
+    if st_w == 200 and isinstance(wf, dict):
+        record("PASS" if wf.get("default_workflow_permissions") == "read" else "WARN", "actions default token", f"default_workflow_permissions={wf.get('default_workflow_permissions')}")
+        record("PASS" if not wf.get("can_approve_pull_request_reviews") else "WARN", "actions approve PRs", f"can_approve_pull_request_reviews={wf.get('can_approve_pull_request_reviews')}")
+    else:
+        record("MANUAL", "actions workflow permissions", f"HTTP {st_w or 'error'}, {need}")
+    st_f, fp = api(f"repos/{slug}/actions/permissions/fork-pr-contributor-approval")
+    if st_f == 200 and isinstance(fp, dict):
+        pol = fp.get("approval_policy")
+        record("PASS" if pol in ("first_time_contributors", "all_external_contributors") else "WARN", "fork PR approval", str(pol))
+    else:
+        record("MANUAL", "fork PR approval", f"HTTP {st_f or 'error'}, {need}")
+
+
+def finish(slug, meta):
+    width = max(len(n) for _, n, _ in results)
+    for level, n, d in results:
+        print(f"{level:<6} {n:<{width}}  {d}")
+    return slug, meta
+
+
+flags = [a for a in sys.argv[1:] if a.startswith("--")]
+target = [a for a in sys.argv[1:] if not a.startswith("--")][:1]
+if "--security-only" in flags and "--skip-security" in flags:
+    sys.exit("use only one of --security-only and --skip-security")
 meta = json.loads(
     gh(
         "repo", "view", *target, "--json",
-        "nameWithOwner,name,description,homepageUrl,licenseInfo,repositoryTopics,isPrivate",
+        "nameWithOwner,name,description,homepageUrl,licenseInfo,repositoryTopics,isPrivate,defaultBranchRef",
     )
 )
 slug = meta["nameWithOwner"]
 name = meta["name"]
+default_branch = (meta.get("defaultBranchRef") or {}).get("name") or "main"
+
+if "--security-only" in flags:
+    security_checks(slug, default_branch)
+    finish(slug, meta)
+    sys.exit(1 if any(l == "FAIL" for l, _, _ in results) else 0)
 
 # Description
 desc = (meta["description"] or "").strip()
@@ -136,9 +259,10 @@ if "server.json" in files:
         elif any(p.get("registryType") == "npm" for p in pkgs):
             record("PASS", "npm mcpName", "check package.json mcpName equals server.json name (not read by this script)")
 
-width = max(len(n) for _, n, _ in results)
-for level, n, d in results:
-    print(f"{level:<5} {n:<{width}}  {d}")
+if "--skip-security" not in flags:
+    security_checks(slug, default_branch)
+
+finish(slug, meta)
 print(f"\nMANUAL  social preview: cannot be read or set by CLI. Settings > General > Social preview (1280x640) for {slug}.")
 if meta["isPrivate"]:
     print("NOTE    repo is private, so it is invisible to search until it is made public.")
