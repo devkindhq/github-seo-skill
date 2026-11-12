@@ -42,6 +42,16 @@ Never skip this, and never let distribution excitement jump ahead of it.
 
 Details and the publish-or-not framework: `references/publish-safety.md`.
 
+## Step 1b: repo security and permissions (report only)
+
+Public does not mean safe to push to. Check who can change the default branch and the Pages
+publishing branch, and which security features are on. Run
+`python3 scripts/check_repo_seo.py owner/repo --security-only`. It covers branch rules (PR
+required, deletion and force-push blocked), the Pages branch, secret scanning, push protection,
+Dependabot, private vulnerability reporting and Actions token permissions. Items that need admin
+print MANUAL: say "could not check, needs admin" and ask the owner. Never change settings
+yourself, only recommend. Commands and evidence labels: `references/repo-security-checklist.md`.
+
 ## Step 2: audit what exists
 
 Run the read-only audit. It needs the GitHub CLI (`gh`) logged in.
@@ -51,7 +61,8 @@ python3 scripts/check_repo_seo.py owner/repo
 ```
 
 It reports pass, warn or fail for the description, topics, homepage, license, README shape,
-and community files, and prints the one lever it cannot check (the social preview image).
+and community files, then runs the security section from Step 1b (skip it with
+`--skip-security`), and prints the one lever it cannot check (the social preview image).
 Fix failures first, then warnings.
 
 ## Step A: plain repo checklist
@@ -104,5 +115,6 @@ build and label, leaked-history scrub) are in the install reference.
 ## Reporting back
 
 When you finish, give the owner three lists: what you changed, what only they can do (social
-preview upload, pinning, account-bound registry logins), and which advice is verified, observed
-or general.
+preview upload, pinning, account-bound registry logins, repo security settings you recommended),
+and which advice is verified, observed or general. List every security check that returned
+MANUAL as unchecked, not as passed.
