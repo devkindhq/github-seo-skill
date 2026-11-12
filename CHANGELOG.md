@@ -4,6 +4,8 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-13
+
 ### Added
 - Repo security and permission checks in `check_repo_seo.py` (read-only, GET only): default branch and Pages publishing branch rules (PR required, deletion and force-push blocked), secret scanning, push protection, Dependabot, private vulnerability reporting, Actions token permissions and fork PR approval. Checks that need admin print MANUAL.
 - `--security-only` and `--skip-security` flags.
