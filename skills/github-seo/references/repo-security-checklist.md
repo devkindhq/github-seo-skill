@@ -1,6 +1,6 @@
 # Repo security and permission checklist
 
-Run by `python3 scripts/check_repo_seo.py owner/repo --security-only`. The skill reports and
+Run the GET commands below, then score each one with "Results". The skill reports and
 recommends. It never changes repo settings: the owner applies fixes in Settings.
 
 Labels: **verified** = primary doc checked 2026-11-13; **observed** = live `gh api` GET on
@@ -30,8 +30,30 @@ Labels: **verified** = primary doc checked 2026-11-13; **observed** = live `gh a
 | Private vulnerability reporting | `gh api repos/OWNER/REPO/private-vulnerability-reporting` | `{"enabled": bool}`, readable without admin [observed]. Pair with a SECURITY.md. |
 | Actions default token | `gh api repos/OWNER/REPO/actions/permissions/workflow` | Want `default_workflow_permissions: read` and `can_approve_pull_request_reviews: false`. Defaults are not documented [verified: /en/rest/actions/permissions]. |
 | Fork PR approval | `gh api repos/OWNER/REPO/actions/permissions/fork-pr-contributor-approval` | `approval_policy`: `first_time_contributors_new_to_github` (weakest), `first_time_contributors`, `all_external_contributors` [verified]. |
-| Code scanning | `gh api repos/OWNER/REPO/code-scanning/alerts` | 404 "no analysis found" means not set up [observed]. Not scored by the script. |
+| Code scanning | `gh api repos/OWNER/REPO/code-scanning/alerts` | 404 "no analysis found" means not set up [observed]. Not scored in Results. |
 | CODEOWNERS | `gh api repos/OWNER/REPO/contents/.github/CODEOWNERS` | Optional for solo repos. 404 means absent [observed]. Not scored. |
+
+## Results
+
+URL-encode a branch name in a path (`feature/x` becomes `feature%2Fx`). A status that a rule
+does not name is MANUAL with the HTTP status.
+
+| Check | Pass | Warn | Fail | MANUAL |
+|---|---|---|---|---|
+| Repo object (`gh api repos/OWNER/REPO`) | | | | Not 200. Report MANUAL for the whole section and stop. |
+| Token permission (`gh api repos/OWNER/REPO --jq .permissions.admin`) | `true` | `false`: the checks below are limited | | |
+| Default branch rules | `deletion`, `non_fast_forward` and `pull_request` all present | Some missing | No active rule of any type (admin token) | Rules endpoint not 200, or no active rule with a read-only token |
+| Pages branch rules (when `has_pages` is true) | `source.branch` is the default branch, or has `deletion` and `non_fast_forward` | Some missing | No active rule of any type (admin token) | Rules endpoint not 200, no active rule with a read-only token, no `source.branch` (Actions build), or `pages` not 200 |
+| Secret scanning, push protection, Dependabot security updates | `status` is `enabled` | Any other `status` | | `security_and_analysis` absent |
+| Dependabot alerts (admin token only) | Success | Anything else, such as 404 | | Read-only token |
+| Private vulnerability reporting | `enabled: true` | `enabled: false`. SECURITY.md should say where to report. | | Not 200 |
+| Actions default token | `default_workflow_permissions` is `read` | Anything else, such as `write` | | Not 200 |
+| Actions approve PRs | `can_approve_pull_request_reviews` is `false` | `true` | | Not 200 |
+| Fork PR approval | `first_time_contributors` or `all_external_contributors` | Anything else, such as `first_time_contributors_new_to_github` | | Not 200 |
+
+With an admin token, also read the legacy protection of the branch. When it returns 200, a
+`required_pull_request_reviews` object counts as `pull_request`. `allow_deletions.enabled: false`
+counts as `deletion`. `allow_force_pushes.enabled: false` counts as `non_fast_forward`.
 
 ## Reporting
 
