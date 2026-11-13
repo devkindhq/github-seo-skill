@@ -60,7 +60,7 @@ or no response, is a fail:
 | Listing | URL | Pass | Otherwise |
 |---|---|---|---|
 | Official MCP Registry | `https://registry.modelcontextprotocol.io/v0/servers/<name, URL-encoded>/versions/latest` | 200. Note `server.version` and `server.packages`. | Fail: not found. |
-| npm package (for each npm entry in `server.packages`) | `https://registry.npmjs.org/<identifier>/latest` | 200, and `version` equals the version of that package entry, or `server.version` when the entry has none. | Warn: the versions differ. Fail: not found. |
+| npm package (for each npm entry in `server.packages`) | `https://registry.npmjs.org/<identifier>/latest`. A scoped name works as `@scope/name` or with the `/` encoded (`@scope%2Fname`). | 200, and `version` equals the version of that package entry, or `server.version` when the entry has none. | Warn: the versions differ. Fail: not found. |
 | Docker Hub image (for each OCI entry on Docker Hub) | `https://hub.docker.com/v2/repositories/<image>/tags/<tag>` | 200. Take `<image>` and `<tag>` from the identifier without the `docker.io/` prefix, split at `:`. With no tag, use `latest`. With no `/` in the image, put `library/` before it. | Fail: the tag does not exist. Warn: the image is on another host (the first part of the image name has a dot), so check it by hand. |
 | Glama | `https://glama.ai/mcp/servers/owner/repo` | 200. | Warn on 404: Glama can list a server under another name, so search glama.ai by hand. |
 

@@ -62,7 +62,7 @@ or set through the CLI, so it is listed as a manual step.
 
 This repo collects no data and runs no server. The audit only calls the GitHub CLI (`gh`)
 you have logged in, using read-only requests. The listing checks read public pages of the Official
-MCP Registry, npm, Docker Hub and Glama. When the skill guides an MCP server submission, it
+MCP Registry, npm, Docker Hub and Glama, and read the awesome-mcp-servers list through `gh`. When the skill guides an MCP server submission, it
 tells you to look up a server on the Official MCP Registry
 (`https://registry.modelcontextprotocol.io`), and the publishing steps use the `mcp-publisher`
 tool, which sends your server metadata to that registry. Nothing is sent unless you run those steps.

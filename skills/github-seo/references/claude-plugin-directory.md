@@ -34,7 +34,7 @@ nothing depends on the files.
 
 ## Organisations that are not Verified
 
-The portal shows these rules. The public docs do not state them, so re-check them before each submission.
+The portal shows these rules. The public docs do not state all of them, so re-check them before each submission.
 Unless a line has its own label, the source is one refused version and one draft validation
 [observed, 2026-11-11].
 
@@ -43,8 +43,10 @@ Unless a line has its own label, the source is one refused version and one draft
   a package manager configuration file, and a text file that is not UTF-8 or has NUL bytes. A
   license, a readme, `.gitignore` and the icon can stay if they are UTF-8 text or an allowed
   image and do not start with `#!`.
-- SVG is not on the portal's list. The public checklist permits SVG [verified, 2026-11-11,
-  claude.com/docs/plugins/pre-submission-checklist.md]. Use a PNG [inference].
+- The portal's list and the public checklist disagree on two formats. The portal's list accepts
+  ICO and omits SVG. The public checklist permits SVG and font files, and holds `.ico`
+  [verified, 2026-11-13, claude.com/docs/plugins/pre-submission-checklist.md]. Use PNG, and keep
+  SVG, ICO and font files out of the plugin folder [inference].
 - **Marked "not refused yet":** a local MCP server, and `package.json` fields outside the
   portal's list, such as `mcpName`. For a mod, the portal says that later only Verified
   organisations can submit one.
@@ -59,11 +61,12 @@ Unless a line has its own label, the source is one refused version and one draft
 List the files the directory is likely to refuse. Run this in the plugin folder:
 
 ```bash
-git ls-files | grep -v -i -E '\.(md|txt|json|ya?ml|png|jpe?g|gif|webp|ico)$' | grep -v -E '(^|/)(LICENSE|\.gitignore)$'
+git ls-files | grep -v -i -E '\.(md|txt|json|ya?ml|png|jpe?g|gif|webp)$' | grep -v -E '(^|/)(LICENSE|\.gitignore)$'
 git ls-files -z | xargs -0 awk 'FNR==1 && /^#!/ {print FILENAME}'
 ```
 
-The commands go by file name and first line. They do not check package manager configuration
+The first command also lists `.ico` files, because the public checklist holds them. The commands
+go by file name and first line. They do not check package manager configuration
 files, text encoding or NUL bytes.
 
 If a script is only for CI, move its checks into the workflow file. If a skill runs a script,
@@ -79,7 +82,9 @@ few validation checks still read the whole repo, such as the size limits and `.g
   claude.com/docs/directory/publish.md].
 - A GitHub repo with `.claude-plugin/plugin.json` [observed, 2026-11-02]. The repo can stay
   private while you validate and submit, but must be public before the listing goes live
-  [verified, 2026-11-02, claude.com/docs/plugins/submit.md].
+  [verified, 2026-11-02, claude.com/docs/plugins/submit.md]. For a private repo, the Claude
+  GitHub App must be installed on the repo and connected to your Claude organisation, and you
+  must agree to the source upload [verified, 2026-11-13, same page].
 - A GitHub account with push access to the repo, used by the submitter [observed, 2026-11-02],
   and connected on claude.ai in the submitting organisation [verified, 2026-11-02, same page].
 - The listing belongs to the organisation you submit from. Submit from the organisation that

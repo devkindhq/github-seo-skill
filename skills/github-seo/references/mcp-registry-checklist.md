@@ -98,16 +98,19 @@ a platform here. To retire a platform, add a row.
 ## awesome-mcp-servers
 
 `punkpeye/awesome-mcp-servers` needs a Glama listing first. Its CI
-(`.github/workflows/check-glama.yml`) and `CONTRIBUTING.md` require the following
-[verified, 2026-11-02, commit 29f2d49]:
+(`.github/workflows/check-glama.yml`) and `CONTRIBUTING.md` require the following. Each line
+names its file [verified, 2026-11-02, commit 29f2d49]:
 
-- A public GitHub repo. A remote-only server goes to `punkpeye/awesome-remote-mcp-servers`.
+- A public GitHub repo. A remote-only server goes to `punkpeye/awesome-remote-mcp-servers`
+  (`CONTRIBUTING.md`).
 - The entry name in `owner/repo` form, linked to the GitHub repo. The CI message: "The entry
-  name must use the full `owner/repo` format (not just the repo name)."
-- A Glama score badge in the entry. Without it, CI adds the label `missing-glama`:
+  name must use the full `owner/repo` format (not just the repo name)." (`check-glama.yml`)
+- A Glama score badge in the entry. Without it, CI adds the label `missing-glama`
+  (`check-glama.yml`):
   `[![owner/repo MCP server](https://glama.ai/mcp/servers/owner/repo/badges/score.svg)](https://glama.ai/mcp/servers/owner/repo)`
-- At least one permitted emoji and no other emoji. 🎖️ marks an official implementation only.
-- Alphabetical order within the category.
+- At least one permitted emoji and no other emoji (`check-glama.yml`). Use 🎖️ only for an
+  official implementation (README legend).
+- Alphabetical order within the category (`CONTRIBUTING.md`).
 
 The list's bot and recent merges add these rules:
 
@@ -119,8 +122,9 @@ The list's bot and recent merges add these rules:
   remote APIs", 🏠 "when MCP server is talking to a locally installed software" [verified,
   2026-11-03, README legend note].
 - Put the badge right after the repo link, as the existing entries do [observed, 2026-11-03].
-- `CONTRIBUTING.md` sets no star minimum. The Glama checks are the gate for this list
-  [verified, 2026-11-03, CONTRIBUTING.md].
+- `CONTRIBUTING.md` sets no star minimum [verified, 2026-11-03, CONTRIBUTING.md]. The Glama
+  checks in `check-glama.yml` label and comment on each entry that fails them [verified,
+  2026-11-02, commit 29f2d49], and act as the gate for this list [inference].
 
 Order: make the repo public, get the Glama listing, then open the awesome-list PR.
 

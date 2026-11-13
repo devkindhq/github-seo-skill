@@ -27,8 +27,8 @@ it can reject the version with "NPM package '...' exists, but version 'X' was no
 `npm view <pkg>@<version>` returns the version. The version became visible about one minute
 after publish [observed on a Devkind npm MCP server, 2026-11-02].
 
-OCI details [verified]: supported hosts are Docker Hub, `ghcr.io`, Google Artifact Registry,
-`*.azurecr.io` and `mcr.microsoft.com`. The `identifier` is `registry/namespace/repository:tag`
+OCI details [verified]: supported hosts are Docker Hub, `ghcr.io`, `quay.io`, Google Artifact
+Registry, `*.azurecr.io` and `mcr.microsoft.com`. The `identifier` is `registry/namespace/repository:tag`
 (a digest also works). Pin a version tag, not `latest`. Put the `LABEL` in the Dockerfile and
 rebuild before the final push, because the label has to be in the pushed image.
 
