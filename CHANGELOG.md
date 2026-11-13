@@ -15,7 +15,15 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - `references/audit-checks.md`: the repo audit and the listing checks as read-only GitHub CLI commands and tables. The audit flags files and README lines that name a retired platform. The listing checks cover the Official MCP Registry entry, its npm or Docker Hub package, Glama and awesome-mcp-servers.
 
 ### Removed
-- `skills/github-seo/scripts/check_repo_seo.py`, `scripts/validate_skill.py` and the SVG assets. The Claude plugin directory accepts only Markdown, text, JSON, YAML and PNG, JPEG, GIF, WebP or ICO files from an organisation that is not Verified. CI runs the validator checks inline.
+- `skills/github-seo/scripts/check_repo_seo.py`, `scripts/validate_skill.py` and the SVG assets. The Claude plugin directory accepts only Markdown, text, JSON, YAML and PNG, JPEG, GIF, WebP or ICO files from an organisation that is not Verified. CI runs the validator checks inline. The 0.3.0 security checks are now commands and result rules in `references/repo-security-checklist.md`.
+
+## [0.3.0] - 2026-11-13
+
+### Added
+- Repo security and permission checks in `check_repo_seo.py` (read-only, GET only): default branch and Pages publishing branch rules (PR required, deletion and force-push blocked), secret scanning, push protection, Dependabot, private vulnerability reporting, Actions token permissions and fork PR approval. Checks that need admin print MANUAL.
+- `--security-only` and `--skip-security` flags.
+- `references/repo-security-checklist.md` with evidence labels and the exact `gh api` commands (checked 2026-11-13).
+- SKILL.md Step 1b, and evals for security audit prompts. The existing `set up branch protection rules on main` should_not_trigger case stays valid: the skill audits and recommends, it never configures.
 
 ## [0.2.0] - 2026-11-02
 

@@ -42,6 +42,16 @@ Never skip this, and never let distribution excitement jump ahead of it.
 
 Details and the publish-or-not framework: `references/publish-safety.md`.
 
+## Step 1b: repo security and permissions (report only)
+
+Public does not mean safe to push to. Check who can change the default branch and the Pages
+publishing branch, and which security features are on. Run the read-only `gh api` commands in
+`references/repo-security-checklist.md` and score them with its result rules. They cover branch
+rules (PR required, deletion and force-push blocked), the Pages branch, secret scanning, push
+protection, Dependabot, private vulnerability reporting and Actions token permissions. Report an
+item that needs admin as MANUAL: say "could not check, needs admin" and ask the owner. Never
+change settings yourself, only recommend.
+
 ## Step 2: audit what exists
 
 Run the read-only repo audit in `references/audit-checks.md`. It needs the GitHub CLI (`gh`) logged in.
@@ -102,5 +112,6 @@ After you submit, confirm each listing with the listing checks in `references/au
 ## Reporting back
 
 When you finish, give the owner three lists: what you changed, what only they can do (social
-preview upload, pinning, account-bound registry logins), and which advice is verified, observed
-or general.
+preview upload, pinning, account-bound registry logins, repo security settings you recommended),
+and which advice is verified, observed or general. List every security check that returned
+MANUAL as unchecked, not as passed.

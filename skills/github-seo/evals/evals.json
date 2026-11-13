@@ -11,6 +11,8 @@
     { "type": "should_trigger", "prompt": "is it safe to make this private repo public" },
     { "type": "should_trigger", "prompt": "submit my mcp server to glama and mcp.so" },
     { "type": "should_trigger", "prompt": "audit the discoverability of github.com/acme/widget-cli" },
+    { "type": "should_trigger", "prompt": "before we go public, check who can push to main and gh-pages on our repo" },
+    { "type": "should_trigger", "prompt": "is secret scanning and push protection turned on for this public repo, and is the pages branch protected" },
     { "type": "should_not_trigger", "prompt": "improve the SEO of my marketing website" },
     { "type": "should_not_trigger", "prompt": "write a blog post about our product" },
     { "type": "should_not_trigger", "prompt": "fix the failing unit test in this repo" },
@@ -19,6 +21,8 @@
     { "type": "should_not_trigger", "prompt": "build an MCP server that wraps our REST API" },
     { "type": "should_not_trigger", "prompt": "generate a changelog from the git log" },
     { "type": "should_not_trigger", "prompt": "run keyword research for an ecommerce store" },
+    { "type": "should_not_trigger", "prompt": "enable branch protection on main with required reviews using the API" },
+    { "type": "should_not_trigger", "prompt": "write a GitHub Actions workflow that runs CodeQL" },
     {
       "type": "quality",
       "prompt": "We want to open-source our internal CLI. What do we do before and after we flip it public?",
@@ -59,6 +63,17 @@
         "fills websiteUrl and keeps the description at 100 characters or fewer",
         "tells the owner that mcp-publisher login is interactive and theirs to run",
         "labels registry facts with a verification date rather than stating them from memory"
+      ]
+    },
+    {
+      "type": "quality",
+      "prompt": "Check the security settings of github.com/acme/widget-cli before we open-source it",
+      "expected_behavior": [
+        "runs the gh api commands in references/repo-security-checklist.md rather than guessing at the repo state",
+        "checks the default branch and the Pages publishing branch for deletion, force-push and pull request rules",
+        "reports anything needing admin as could not check, needs admin, not as passed",
+        "recommends settings changes and the Settings path but does not change any repo setting itself",
+        "labels evidence as verified, observed or general"
       ]
     }
   ]
