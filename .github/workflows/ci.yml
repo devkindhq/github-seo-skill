@@ -17,9 +17,61 @@ jobs:
         with:
           python-version: "3.13"
       - name: Validate skill, evals, manifests and links
-        run: python3 scripts/validate_skill.py
-      - name: Compile the audit script
-        run: python3 -m py_compile skills/github-seo/scripts/check_repo_seo.py
+        # Inline, because the plugin directory refuses script files from this repo.
+        run: |
+          python3 - <<'EOF'
+          import json, re, sys
+          from pathlib import Path
+
+          ROOT = Path(".")
+          errors = []
+          for skill_md in sorted(ROOT.glob("skills/*/SKILL.md")):
+              d = skill_md.parent
+              m = re.match(r"^---\n(.*?)\n---\n", skill_md.read_text(), flags=re.S)
+              if not m:
+                  errors.append(f"{skill_md}: missing frontmatter")
+                  continue
+              fm = dict(
+                  line.split(":", 1) for line in m.group(1).splitlines() if ":" in line and not line.startswith(" ")
+              )
+              fm = {k.strip(): v.strip() for k, v in fm.items()}
+              name = fm.get("name", "")
+              if name != d.name:
+                  errors.append(f"{skill_md}: name '{name}' must equal directory '{d.name}'")
+              if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", name):
+                  errors.append(f"{skill_md}: name must be lowercase-hyphenated")
+              desc = fm.get("description", "")
+              if not desc:
+                  errors.append(f"{skill_md}: description is empty")
+              elif len(desc) > 1024:
+                  errors.append(f"{skill_md}: description is {len(desc)} chars, limit 1024")
+              evals = d / "evals" / "evals.json"
+              if not evals.exists():
+                  errors.append(f"{d}: missing evals/evals.json")
+              else:
+                  cases = json.loads(evals.read_text()).get("cases", [])
+                  kinds = {c.get("type") for c in cases}
+                  for needed in ("should_trigger", "should_not_trigger", "quality"):
+                      if needed not in kinds:
+                          errors.append(f"{evals}: no '{needed}' cases")
+                  for c in cases:
+                      if c.get("type") == "quality" and not c.get("expected_behavior"):
+                          errors.append(f"{evals}: quality case without expected_behavior: {c.get('prompt')}")
+          for manifest in (".claude-plugin/plugin.json", ".claude-plugin/marketplace.json"):
+              try:
+                  json.loads((ROOT / manifest).read_text())
+              except Exception as e:
+                  errors.append(f"{manifest}: {e}")
+          link = re.compile(r"\]\((?!https?:|#|mailto:)([^)#\s]+)")
+          for md in ROOT.rglob("*.md"):
+              if ".git" in md.parts:
+                  continue
+              for target in link.findall(md.read_text()):
+                  if not (md.parent / target).exists():
+                      errors.append(f"{md}: broken link '{target}'")
+          print("\n".join(errors) or "ok")
+          sys.exit(1 if errors else 0)
+          EOF
 
   skills-sh:
     runs-on: ubuntu-latest

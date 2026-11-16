@@ -1,6 +1,6 @@
 ---
 name: github-seo
-description: Makes an open-source GitHub repo discoverable and safe to publish. Audits the repo name, description, topics and README for search, writes a search-ready README, runs a pre-publish secret and client-data check, and guides the launch sequence. Covers MCP server registry submissions (Official MCP Registry, Smithery, Glama, mcp.so). Use when the user wants more stars, traffic or search visibility for a repo, is about to open-source a project, asks for GitHub SEO or repo SEO, or wants to publish an MCP server. Not for general website SEO.
+description: Makes an open-source GitHub repo discoverable and safe to publish. Audits the repo name, description, topics and README for search, writes a search-ready README, runs a pre-publish secret and client-data check, and guides the launch sequence. Covers MCP server registry submissions (Official MCP Registry, Glama, mcp.so) and the Claude plugin directory. Use when the user wants more stars, traffic or search visibility for a repo, is about to open-source a project, asks for GitHub SEO or repo SEO, or wants to publish an MCP server. Not for general website SEO.
 license: MIT
 ---
 
@@ -45,24 +45,19 @@ Details and the publish-or-not framework: `references/publish-safety.md`.
 ## Step 1b: repo security and permissions (report only)
 
 Public does not mean safe to push to. Check who can change the default branch and the Pages
-publishing branch, and which security features are on. Run
-`python3 scripts/check_repo_seo.py owner/repo --security-only`. It covers branch rules (PR
-required, deletion and force-push blocked), the Pages branch, secret scanning, push protection,
-Dependabot, private vulnerability reporting and Actions token permissions. Items that need admin
-print MANUAL: say "could not check, needs admin" and ask the owner. Never change settings
-yourself, only recommend. Commands and evidence labels: `references/repo-security-checklist.md`.
+publishing branch, and which security features are on. Run the read-only `gh api` commands in
+`references/repo-security-checklist.md` and score them with its result rules. They cover branch
+rules (PR required, deletion and force-push blocked), the Pages branch, secret scanning, push
+protection, Dependabot, private vulnerability reporting and Actions token permissions. Report an
+item that needs admin as MANUAL: say "could not check, needs admin" and ask the owner. Never
+change settings yourself, only recommend.
 
 ## Step 2: audit what exists
 
-Run the read-only audit. It needs the GitHub CLI (`gh`) logged in.
+Run the read-only repo audit in `references/audit-checks.md`. It needs the GitHub CLI (`gh`) logged in.
 
-```bash
-python3 scripts/check_repo_seo.py owner/repo
-```
-
-It reports pass, warn or fail for the description, topics, homepage, license, README shape,
-and community files, then runs the security section from Step 1b (skip it with
-`--skip-security`), and prints the one lever it cannot check (the social preview image).
+It gives pass, warn or fail for the description, topics, homepage, license, README shape,
+community files and retired-platform leftovers, and names the one lever no command can check (the social preview image).
 Fix failures first, then warnings.
 
 ## Step A: plain repo checklist
@@ -89,19 +84,21 @@ Fix failures first, then warnings.
    produces the artifact the next needs.
 9. **Upstream galleries and awesome-lists** only once the repo is complete and has real stars.
    Maintainers reject cold, thin submissions.
-10. **Claude plugin directory.** If the repo ships a Claude plugin, follow
-    `references/claude-plugin-directory.md` for the submission portal, Validate findings and
-    the other plugin distribution routes.
+10. **Claude plugin directory.** If the repo ships or could ship a Claude plugin, start with
+    "Decide first" in `references/claude-plugin-directory.md`. It says whether to submit, then
+    covers the submission portal, Validate findings and the other plugin distribution routes.
 
 ## Step B: MCP server checklist (after Step A)
 
 Start with `references/mcp-install-and-metadata.md`: choose the package type (npm, PyPI, OCI and
 others each have their own ownership check), complete `server.json` including `websiteUrl`, and
 lay out the README install routes per client. Then use `references/mcp-registry-checklist.md`. It covers the Official MCP Registry (`server.json`
-plus the `mcp-publisher` CLI), Smithery, Glama, mcp.so, mcpservers.org, Cursor Directory, which
+plus the `mcp-publisher` CLI), Glama, mcp.so, mcpservers.org, Cursor Directory, which
 registries auto-ingest from the Official one, and common gotchas (stale listings under a personal
-account, publish order, domain presence). Pitfalls from real runs (org namespace 403, OCI
+account, the Glama build config, publish order, domain presence). Pitfalls from real runs (org namespace 403, OCI
 build and label, leaked-history scrub) are in the install reference.
+Submit only to the registries in that checklist, never to one in its "Retired platforms" table.
+After you submit, confirm each listing with the listing checks in `references/audit-checks.md`.
 
 ## What not to do
 
