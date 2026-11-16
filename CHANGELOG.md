@@ -4,6 +4,8 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-16
+
 ### Changed
 - MCP distribution facts (2026-11-02): Official MCP Registry `_meta` 4 KB limit and npm version timing, Glama listing claim, awesome-mcp-servers requirements, Claude plugin directory rules.
 - MCP distribution facts (2026-11-03): Glama build config and stale listings, awesome-mcp-servers bot and entry rules, Claude plugin preparation.
